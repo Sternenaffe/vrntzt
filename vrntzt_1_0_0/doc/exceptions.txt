@@ -1,0 +1,4 @@
+exceptions to expect:
+
+missing implementation of interface function:
+- visual studio: C2903 'name': symbol is neither a class template nor a function template
