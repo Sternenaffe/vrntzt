@@ -1,2 +1,0 @@
-# vrntzt
-machine learning library
