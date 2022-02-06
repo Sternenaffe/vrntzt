@@ -10,24 +10,24 @@
 
 #include "lib/IO/IO.hpp"
 
-#include "include/Phenomes/Simplistic_Phenome.hpp"
+#include "include/Phenomes/Simplistic_Phenotype.hpp"
 
 namespace vrntzt::neat
 {
 	using std::vector;
-	using internal_type = Simplistic_Phenome::internal_type;
+	using internal_type = Simplistic_Phenotype::internal_type;
 
 	ushort Network_Dimensions::fixed_neuron_num() const
 	{
 		return input_num + output_num;
 	}
 
-	Simplistic_Phenome::Simplistic_Phenome(
+	Simplistic_Phenotype::Simplistic_Phenotype(
 		const Network_Dimensions t_net_dims,
 		const vector<vector<Connection>> t_connections)
 		:
 		// init base
-		IPhenome<Simplistic_Phenome>(),
+		IPhenotype<Simplistic_Phenotype>(),
 		input_num(t_net_dims.input_num),
 		output_num(t_net_dims.output_num),
 		// bias_num is always 1
@@ -36,7 +36,7 @@ namespace vrntzt::neat
 		_connections(t_connections),
 		_output_offset(t_net_dims.input_num + bias_num)
 	{
-		IO::debug("custom init of Simplistic_Phenome\n");
+		IO::debug("custom init of Simplistic_Phenotype\n");
 
 		if (_connections.size() != output_num + hidden_neuron_num)
 		{
@@ -47,33 +47,33 @@ namespace vrntzt::neat
 	}
 
 	// not ready for use!
-	Simplistic_Phenome::Simplistic_Phenome(
+	Simplistic_Phenotype::Simplistic_Phenotype(
 		const Generic_Genome& genome)
 		:
-		IPhenome<Simplistic_Phenome>(),
+		IPhenotype<Simplistic_Phenotype>(),
 		input_num(0),
 		output_num(0),
 		fixed_neuron_num(0),
 		hidden_neuron_num(0),
 		_connections(vector<vector<Connection>>())
 	{
-		IO::debug("Init Simplistic_Phenome from Generic_Genome\n");
+		IO::debug("Init Simplistic_Phenotype from Generic_Genome\n");
 		IO::error("Not supported yet!\n");
 		_init_members();
 	}
 
-	Simplistic_Phenome::~Simplistic_Phenome()
+	Simplistic_Phenotype::~Simplistic_Phenotype()
 	{
 
 	}
 
-	void Simplistic_Phenome::_init_members()
+	void Simplistic_Phenotype::_init_members()
 	{
 		_neuron_states = vector<internal_type>(fixed_neuron_num +
 			hidden_neuron_num);
 	}
 
-	void Simplistic_Phenome::set_input(const int t_index,
+	void Simplistic_Phenotype::set_input(const int t_index,
 		const internal_type t_value)
 	{
 		if (t_index < input_num && t_index >= 0)
@@ -86,12 +86,12 @@ namespace vrntzt::neat
 		}
 	}
 
-	internal_type Simplistic_Phenome::get_input(const int t_index) const
+	internal_type Simplistic_Phenotype::get_input(const int t_index) const
 	{
 		return _neuron_states[t_index + bias_num];
 	}
 
-	internal_type Simplistic_Phenome::get_output(const int t_index) const
+	internal_type Simplistic_Phenotype::get_output(const int t_index) const
 	{
 		if (t_index < output_num && t_index >= 0)
 		{
@@ -104,7 +104,7 @@ namespace vrntzt::neat
 		}
 	}
 
-	void Simplistic_Phenome::activate(int t_iterations)
+	void Simplistic_Phenotype::activate(int t_iterations)
 	{
 		IO::debug("activate network\n");
 
@@ -132,12 +132,12 @@ namespace vrntzt::neat
 		_working = false;
 	}
 
-	bool Simplistic_Phenome::is_working() const
+	bool Simplistic_Phenotype::is_working() const
 	{
 		return _working;
 	}
 
-	void Simplistic_Phenome::_update_neuron_state(const ushort t_neuron)
+	void Simplistic_Phenotype::_update_neuron_state(const ushort t_neuron)
 	{
 		// connections vector only contains hidden_neurons and outputs
 		size_t connections_index = t_neuron - _output_offset;

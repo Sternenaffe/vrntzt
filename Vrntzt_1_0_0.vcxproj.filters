@@ -54,16 +54,16 @@
     <ClCompile Include="test\main.cpp">
       <Filter>test</Filter>
     </ClCompile>
-    <ClCompile Include="src\Genomes\Simple_Genome.cpp">
+    <ClCompile Include="src\Genomes\Simple_Genotype.cpp">
       <Filter>src\Genomes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Genomes\Simplistic_Genome.cpp">
+    <ClCompile Include="src\Genomes\Simplistic_Genotype.cpp">
       <Filter>src\Genomes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Phenomes\Simple_Phenome.cpp">
+    <ClCompile Include="src\Phenomes\Simple_Phenotype.cpp">
       <Filter>src\Phenomes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Phenomes\Simplistic_Phenome.cpp">
+    <ClCompile Include="src\Phenomes\Simplistic_Phenotype.cpp">
       <Filter>src\Phenomes</Filter>
     </ClCompile>
     <ClCompile Include="lib\utility\src\fixed_vector.cpp">
@@ -101,22 +101,22 @@
     <ClInclude Include="include\Decoding\Decoder.hpp">
       <Filter>include\Decoding</Filter>
     </ClInclude>
-    <ClInclude Include="include\Genomes\IGenome.hpp">
+    <ClInclude Include="include\Genomes\IGenotype.hpp">
       <Filter>include\Genomes</Filter>
     </ClInclude>
-    <ClInclude Include="include\Genomes\Simple_Genome.hpp">
+    <ClInclude Include="include\Genomes\Simple_Genotype.hpp">
       <Filter>include\Genomes</Filter>
     </ClInclude>
-    <ClInclude Include="include\Genomes\Simplistic_Genome.hpp">
+    <ClInclude Include="include\Genomes\Simplistic_Genotype.hpp">
       <Filter>include\Genomes</Filter>
     </ClInclude>
-    <ClInclude Include="include\Phenomes\IPhenome.hpp">
+    <ClInclude Include="include\Phenomes\IPhenotype.hpp">
       <Filter>include\Phenomes</Filter>
     </ClInclude>
-    <ClInclude Include="include\Phenomes\Simple_Phenome.hpp">
+    <ClInclude Include="include\Phenomes\Simple_Phenotype.hpp">
       <Filter>include\Phenomes</Filter>
     </ClInclude>
-    <ClInclude Include="include\Phenomes\Simplistic_Phenome.hpp">
+    <ClInclude Include="include\Phenomes\Simplistic_Phenotype.hpp">
       <Filter>include\Phenomes</Filter>
     </ClInclude>
     <ClInclude Include="lib\utility\include\trivial_typedefs.hpp">

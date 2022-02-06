@@ -23,17 +23,17 @@ namespace vrntzt::neat
 {
 	// forward dec
 	template <typename T>
-	class IGenome;
+	class IGenotype;
 
 	template <typename T>
-	class IPhenome;
+	class IPhenotype;
 
 	// concepts for controlling Target and Source of decode functions
 	template <class T>
-	concept Genome_Type = std::is_base_of<IGenome<T>, T>::value;
+	concept Genome_Type = std::is_base_of<IGenotype<T>, T>::value;
 
 	template <class T>
-	concept Phenome_Type = std::is_base_of<IPhenome<T>, T>::value;
+	concept Phenome_Type = std::is_base_of<IPhenotype<T>, T>::value;
 }
 
 #endif // !VRNTZT_CONCEPTS_HPP

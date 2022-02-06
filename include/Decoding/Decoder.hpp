@@ -37,8 +37,8 @@
 #include "lib/utility/include/various.hpp"
 
 #include "src/vrntzt_concepts.hpp"
-#include "include/Genomes/IGenome.hpp"
-#include "include/Phenomes/IPhenome.hpp"
+#include "include/Genomes/IGenotype.hpp"
+#include "include/Phenomes/IPhenotype.hpp"
 #include "include/Generic_Genome.hpp"
 
 namespace vrntzt::neat::decoding

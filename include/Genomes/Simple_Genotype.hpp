@@ -23,23 +23,23 @@
   */
 
 
-#ifndef SIMPLE_GENOME_HPP
-#define SIMPLE_GENOME_HPP
+#ifndef Simple_Genotype_HPP
+#define Simple_Genotype_HPP
 
-#include "include/Genomes/IGenome.hpp"
+#include "include/Genomes/IGenotype.hpp"
 #include "include/Generic_Genome.hpp"
 
 namespace vrntzt::neat
 {
-	class Simple_Genome : public IGenome<Simple_Genome>
+	class Simple_Genotype : public IGenotype<Simple_Genotype>
 	{
 	public:
-		explicit Simple_Genome();
-		virtual ~Simple_Genome();
+		explicit Simple_Genotype();
+		virtual ~Simple_Genotype();
 
 		explicit operator Generic_Genome();
 	};
 }
 
 
-#endif // !SIMPLE_GENOME_HPP
+#endif // !Simple_Genotype_HPP

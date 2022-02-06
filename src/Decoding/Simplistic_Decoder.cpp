@@ -11,8 +11,8 @@
 
 #include "lib/IO/IO.hpp"
 
-#include "include/Genomes/Simplistic_Genome.hpp"
-#include "include/Phenomes/Simplistic_Phenome.hpp"
+#include "include/Genomes/Simplistic_Genotype.hpp"
+#include "include/Phenomes/Simplistic_Phenotype.hpp"
 
 using std::vector;
 
@@ -22,13 +22,14 @@ namespace vrntzt::neat::decoding
 	{
 		IO::debug("init simplistic genome decode\n");
 
-		set_decode_function<Simplistic_Genome, Simplistic_Phenome>(
-			&decode_simplistic_genome);
+		set_decode_function<Simplistic_Genotype, Simplistic_Phenotype>(
+			&decode_Simplistic_Genotype);
 	}
 
-	vector<vector<Connection>> get_sorted_connections(Simplistic_Genome& t_genome)
+	vector<vector<Connection>> get_sorted_connections(Simplistic_Genotype& t_genome)
 	{
 		// should not contain inputs and bias
+		std::cout << t_genome.get_neuron_num() << "\n";
 		vector<vector<Connection>> temp_vec(t_genome.get_neuron_num()
 			- t_genome.input_num - t_genome.bias_num);
 
@@ -52,9 +53,9 @@ namespace vrntzt::neat::decoding
 		return temp_vec;
 	}
 
-	Simplistic_Phenome decode_simplistic_genome(Simplistic_Genome& t_genome)
+	Simplistic_Phenotype decode_Simplistic_Genotype(Simplistic_Genotype& t_genome)
 	{
-		IO::debug("decode Simplistic_Genome to Simplistic_Phenome\n");
+		IO::debug("decode Simplistic_Genotype to Simplistic_Phenotype\n");
 
 		vector<vector<Connection>> sorted_connections = get_sorted_connections(t_genome);
 		Network_Dimensions dim;
@@ -62,6 +63,6 @@ namespace vrntzt::neat::decoding
 		dim.output_num = t_genome.output_num;
 		dim.hidden_neuron_num = t_genome.get_hidden_neuron_num();
 
-		return Simplistic_Phenome(dim, sorted_connections);
+		return Simplistic_Phenotype(dim, sorted_connections);
 	}
 }

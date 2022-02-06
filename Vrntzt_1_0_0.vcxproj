@@ -23,25 +23,25 @@
     <ClCompile Include="lib\utility\src\fixed_vector.cpp" />
     <ClCompile Include="lib\utility\src\various.cpp" />
     <ClCompile Include="src\Decoding\Simplistic_Decoder.cpp" />
-    <ClCompile Include="src\Genomes\Simple_Genome.cpp" />
-    <ClCompile Include="src\Genomes\Simplistic_Genome.cpp" />
+    <ClCompile Include="src\Genomes\Simple_Genotype.cpp" />
+    <ClCompile Include="src\Genomes\Simplistic_Genotype.cpp" />
     <ClCompile Include="src\Helper\simple_helper.cpp" />
-    <ClCompile Include="src\Phenomes\Simple_Phenome.cpp" />
-    <ClCompile Include="src\Phenomes\Simplistic_Phenome.cpp" />
+    <ClCompile Include="src\Phenomes\Simple_Phenotype.cpp" />
+    <ClCompile Include="src\Phenomes\Simplistic_Phenotype.cpp" />
     <ClCompile Include="test\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Decoding\Decoder.hpp" />
     <ClInclude Include="include\Decoding\Simplistic_Decoder.hpp" />
     <ClInclude Include="include\Generic_Genome.hpp" />
-    <ClInclude Include="include\Genomes\IGenome.hpp" />
-    <ClInclude Include="include\Genomes\Simple_Genome.hpp" />
-    <ClInclude Include="include\Genomes\Simplistic_Genome.hpp" />
+    <ClInclude Include="include\Genomes\IGenotype.hpp" />
+    <ClInclude Include="include\Genomes\Simple_Genotype.hpp" />
+    <ClInclude Include="include\Genomes\Simplistic_Genotype.hpp" />
     <ClInclude Include="include\global.hpp" />
     <ClInclude Include="include\Helper\simple_helper.hpp" />
-    <ClInclude Include="include\Phenomes\IPhenome.hpp" />
-    <ClInclude Include="include\Phenomes\Simple_Phenome.hpp" />
-    <ClInclude Include="include\Phenomes\Simplistic_Phenome.hpp" />
+    <ClInclude Include="include\Phenomes\IPhenotype.hpp" />
+    <ClInclude Include="include\Phenomes\Simple_Phenotype.hpp" />
+    <ClInclude Include="include\Phenomes\Simplistic_Phenotype.hpp" />
     <ClInclude Include="lib\IO\IO.hpp" />
     <ClInclude Include="lib\utility\include\fixed_vector.hpp" />
     <ClInclude Include="lib\utility\include\has_member.hpp" />

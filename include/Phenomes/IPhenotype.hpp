@@ -31,7 +31,7 @@
 namespace vrntzt::neat
 {
 	template <class Child_Phenome>
-	class IPhenome
+	class IPhenotype
 	{
 		/* Phenome interface
 		 *
@@ -46,17 +46,17 @@ namespace vrntzt::neat
 
 	protected:
 		// not directly constructable
-		explicit IPhenome()
+		explicit IPhenotype()
 		{
 			// interface checks
 			// must be constructable from Generic_Genome to enable default decode
 			static_assert(u_lib::constructible_with<Child_Phenome, Generic_Genome>::value,
-				"Derived class of 'IPhenome' needs to provide a constructor "
+				"Derived class of 'IPhenotype' needs to provide a constructor "
 				"from 'Generic_Genome'"
 				);
 		}
 
-		virtual ~IPhenome() {}
+		virtual ~IPhenotype() {}
 
 		
 	};

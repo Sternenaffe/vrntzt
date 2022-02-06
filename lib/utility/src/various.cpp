@@ -32,12 +32,26 @@ namespace u_lib
 	// get random int; 0 <= number <= t_max
 	int Random_Generator::randint(int t_max)
 	{
+		if (t_max == 0)
+		{
+			return 0;
+		}
+
 		return _mt() % (t_max + 1);
 	}
 
 	// get random int; t_min <= number <= t_max
 	int Random_Generator::randint(int t_min, int t_max)
 	{
+		if (t_max == t_min)
+		{
+			return t_min;
+		}
+		if (t_max < t_min)
+		{
+			throw;
+		}
+
 		return (_mt() % (t_max - t_min + 1)) + t_min;
 	}
 

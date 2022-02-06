@@ -34,13 +34,13 @@
 // TODO - IMPORTANT: pointer/reference for Connection array
 // TODO: should use half instead of float (?)
 
-#ifndef SIMPLE_PHENOME_HPP
-#define SIMPLE_PHENOME_HPP
+#ifndef Simple_Phenotype_HPP
+#define Simple_Phenotype_HPP
 
 //#include "lib/utility/include/fixed_vector.hpp"
 
 #include "include/global.hpp"
-#include "include/Phenomes/IPhenome.hpp"
+#include "include/Phenomes/IPhenotype.hpp"
 #include "include/Generic_Genome.hpp"
 #include "include/Helper/simple_helper.hpp"
 
@@ -49,28 +49,28 @@ namespace vrntzt::neat
 	// debug settings
 	constexpr bool ACTIVATE_CONN_DEBUG = false;
 
-	class Simplistic_Phenome final : public IPhenome<Simplistic_Phenome>
+	class Simplistic_Phenotype final : public IPhenotype<Simplistic_Phenotype>
 	{
 	public:
 		// type which is used in network
 		using internal_type = float;
 
 		// non-sorted connections
-		//explicit Simplistic_Phenome(const Network_Dimensions t_net_dims,
+		//explicit Simplistic_Phenotype(const Network_Dimensions t_net_dims,
 			//const vector<Connection> t_connections);
 
 
 		// constructors
 		// IMPORTANT: t_connections must be sorted!
-		explicit Simplistic_Phenome(const Network_Dimensions t_net_dims,
+		explicit Simplistic_Phenotype(const Network_Dimensions t_net_dims,
 			const std::vector<std::vector<Connection>> t_connections);
 
-		explicit Simplistic_Phenome(const Generic_Genome& genome);
+		explicit Simplistic_Phenotype(const Generic_Genome& genome);
 
-		Simplistic_Phenome(const Simplistic_Phenome&) = delete;
-		Simplistic_Phenome& operator=(Simplistic_Phenome) = delete;
+		Simplistic_Phenotype(const Simplistic_Phenotype&) = delete;
+		Simplistic_Phenotype& operator=(Simplistic_Phenotype) = delete;
 
-		virtual ~Simplistic_Phenome();
+		virtual ~Simplistic_Phenotype();
 
 		// methods to get/set inputs & outputs
 		void set_input(const int t_index, const internal_type t_value);
@@ -79,6 +79,8 @@ namespace vrntzt::neat
 
 		// core function: will process inputs and store solution in output
 		void activate(int t_iterations);
+
+		void reset();
 
 		// flags
 		// check if activate is currently working
@@ -120,4 +122,4 @@ namespace vrntzt::neat
 }
 
 
-#endif // !SIMPLE_PHENOME_HPP
+#endif // !Simple_Phenotype_HPP

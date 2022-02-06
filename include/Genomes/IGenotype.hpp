@@ -19,7 +19,7 @@
  * API of Genomes:
  * 
  * Target_Phenome decode<Target_Phenome>():
- *		Target_Phenome must inherit from IPhenome or be Generic_Genome
+ *		Target_Phenome must inherit from IPhenotype or be Generic_Genome
  * 
  * 
  * 
@@ -42,7 +42,7 @@ namespace vrntzt::neat
 
 	// interface class for every Genome
 	template <class Child_Genome>
-	class IGenome
+	class IGenotype
 	{
 		/* Genome interface
 		 * 
@@ -60,18 +60,18 @@ namespace vrntzt::neat
 		 */
 		
 	protected:
-		explicit IGenome()
+		explicit IGenotype()
 		{
 			// needs to support conversion to Generic_Genome to enable default
 			// decoding
 			static_assert(u_lib::has_member_function<Child_Genome,
 				&Child_Genome::operator Generic_Genome, Generic_Genome>::value,
-				"Derived class of 'IGenome' needs to provide a conversion "
+				"Derived class of 'IGenotype' needs to provide a conversion "
 				"operator to 'Generic_Genome'"
 				);
 		}
 
-		virtual ~IGenome() {};
+		virtual ~IGenotype() {};
 	};
 }
 

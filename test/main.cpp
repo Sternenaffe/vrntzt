@@ -7,19 +7,19 @@
 
 #include "include/Decoding/Decoder.hpp"
 #include "include/Decoding/Simplistic_Decoder.hpp"
-#include "include/Genomes/Simplistic_Genome.hpp"
-#include "include/Phenomes/Simplistic_Phenome.hpp"
+#include "include/Genomes/Simplistic_Genotype.hpp"
+#include "include/Phenomes/Simplistic_Phenotype.hpp"
 //#include "../include/Generic_Genome.hpp"
 
 using namespace vrntzt::neat;
 using std::vector;
 
-//struct decode_simple_genome : public Simple_Genome
+//struct decode_Simple_Genotype : public Simple_Genotype
 //{
-//	static Simple_Phenome test_decode(Simple_Genome& t_genome)
+//	static Simple_Phenotype test_decode(Simple_Genotype& t_genome)
 //	{
 //		std::cout << "decode\n";
-//		return Simple_Phenome();
+//		return Simple_Phenotype();
 //	}
 //};
 
@@ -27,32 +27,37 @@ int main()
 {
 	decoding::init_simplistic_decode();
 
-	Genome g1(1, 3, 3.5);
-	Genome g2(0, 3, -0.75);
-	Genome g3(2, 3, 0.1);
+	Simplistic_Genotype genotype1(2, 1);
+	Simplistic_Genotype genotype2(2, 1);
 
-	std::vector genome_vec{
-		g1, g2
-	};
+	// offspring
+	Simplistic_Genotype genotype3(2, 1);
 
-	Simplistic_Genome genome(2, 1, genome_vec);
-	genome.add_genome(g3);
+	Simplistic_Phenotype test_ph = decoding::decode<Simplistic_Genotype,
+		Simplistic_Phenotype>(genotype1);
+	test_ph.set_input(0, 0);
+	test_ph.set_input(1, 0);
+	test_ph.activate(10);
 
 	std::cout << "-------------------------------\n\n";
 
+	// let genomes mutate
+	for (int i = 0; i < 15; ++i)
+	{
+		genotype1.mutate();
+		genotype2.mutate();
+	}
+
+	std::cout << "-------------------------------\n\n";
+
+	// test crossover
+	
+	genotype1.set_fitness(1);
+
 	for (int i = 0; i < 10; ++i)
 	{
-		Simplistic_Phenome net = decoding::decode<Simplistic_Genome,
-			Simplistic_Phenome>(genome);
-
-		net.set_input(0, 2);
-		net.set_input(1, 1);
-
-		net.activate(3);
-
-		std::cout << net.get_output(0) << "\n";
-
-		genome.mutate();
+		genotype3 = Simplistic_Genotype::create_offspring(
+			genotype1, genotype2);
 
 		std::cout << "-------------------------------\n\n";
 	}

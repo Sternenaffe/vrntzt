@@ -19,15 +19,15 @@
 #define VRNTZT_SIMPLISTIC_DECODER_HPP
 
 #include "Decoder.hpp"
-#include "include/Genomes/Simplistic_Genome.hpp"
-#include "include/Phenomes/Simplistic_Phenome.hpp"
+#include "include/Genomes/Simplistic_Genotype.hpp"
+#include "include/Phenomes/Simplistic_Phenotype.hpp"
 
 namespace vrntzt::neat::decoding
 {
 	// adds decode functions to decoder
 	void init_simplistic_decode();
 
-	Simplistic_Phenome decode_simplistic_genome(Simplistic_Genome& t_genome);
+	Simplistic_Phenotype decode_Simplistic_Genotype(Simplistic_Genotype& t_genome);
 }
 
 #endif // !VRNTZT_SIMPLISTIC_DECODER_HPP
