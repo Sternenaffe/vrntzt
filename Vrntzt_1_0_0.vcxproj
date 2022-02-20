@@ -28,16 +28,18 @@
     <ClCompile Include="src\Helper\simple_helper.cpp" />
     <ClCompile Include="src\Phenomes\Simple_Phenotype.cpp" />
     <ClCompile Include="src\Phenomes\Simplistic_Phenotype.cpp" />
+    <ClCompile Include="src\vrntzt_global.cpp" />
     <ClCompile Include="test\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Decoding\Decoder.hpp" />
     <ClInclude Include="include\Decoding\Simplistic_Decoder.hpp" />
+    <ClInclude Include="include\Evolution\Neat_Evolution_Manager.hpp" />
     <ClInclude Include="include\Generic_Genome.hpp" />
     <ClInclude Include="include\Genomes\IGenotype.hpp" />
     <ClInclude Include="include\Genomes\Simple_Genotype.hpp" />
     <ClInclude Include="include\Genomes\Simplistic_Genotype.hpp" />
-    <ClInclude Include="include\global.hpp" />
+    <ClInclude Include="include\vrntzt_global.hpp" />
     <ClInclude Include="include\Helper\simple_helper.hpp" />
     <ClInclude Include="include\Phenomes\IPhenotype.hpp" />
     <ClInclude Include="include\Phenomes\Simple_Phenotype.hpp" />
@@ -52,6 +54,7 @@
   <ItemGroup>
     <None Include="lib\utility\src\has_member.tpp" />
     <None Include="src\Decoding\Decoder.tpp" />
+    <None Include="src\Evolution\Neat_Evolution_Manager.tpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

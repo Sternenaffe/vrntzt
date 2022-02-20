@@ -13,17 +13,29 @@
   * 
   */
 
+// TODO: create .tpp file
+
 #ifndef U_LIB_VARIOUS_HPP
 #define U_LIB_VARIOUS_HPP
 
+#include <utility>
+#include <tuple>
 #include <random>
 
-#include "lib/utility/include/trivial_typedefs.hpp"
+#include "../../IO/IO.hpp"
+#include "trivial_typedefs.hpp"
 
 namespace u_lib
 {
 	template <typename Return_Type, typename... Arg_Types>
 	using Delegate = Return_Type(*)(Arg_Types...);
+
+	template <typename T>
+	concept Indexable = requires(T t, int index)
+	{
+		t.size();
+		t.operator[](index);
+	};
 
 	class Random_Generator final
 	{
@@ -45,6 +57,44 @@ namespace u_lib
 		float rand(float t_max);
 		// get random float; t_min <= number <= t_max
 		float rand(float t_min, float t_max);
+
+		// get random item from random accessable container
+		template <Indexable T>
+		auto& random_item(T& t)
+		{
+			if (t.size() == 0)
+			{
+				IO::error("can't pick random item from empty container\n");
+			}
+
+			return t[randint(t.size() - 1)];
+		}
+
+		// get random item pair from random accessable container
+		// item1 != item2
+		template <Indexable T>
+		auto random_item_pair(T& t)
+		{
+			using std::declval;
+			using std::tuple;
+			using inner_type = decltype(declval<T>()[declval<size_t>()]);
+
+			if (t.size() <= 1)
+			{
+				IO::error("can't pick random item pair from container with less than two elements\n");
+			}
+
+			size_t index_1 = randint(t.size() - 1);
+			// chose from every - 1 items
+			size_t index_2 = randint(t.size() - 2);
+			// check if items are same - if yes: choose not in range included item
+			if (index_1 == index_2)
+			{
+				index_2 = t.size() - 1;
+			}
+
+			return tuple<inner_type&, inner_type&>(t[index_1], t[index_2]);
+		}
 
 		uint get_seed() const;
 

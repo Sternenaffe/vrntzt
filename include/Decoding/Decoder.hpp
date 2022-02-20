@@ -46,21 +46,21 @@ namespace vrntzt::neat::decoding
 	using u_lib::Delegate;
 
 	// decode Source Genome into Target via stored function pointer
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline Target decode(Source& t_source);
 
 	// sets user-defined decode method for specific conversion
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline void set_decode_function(Delegate<Target, Source&> t_func);
 
 	// overload if function takes const Source - invalid!
 	// function pointer which takes const ref is not castable to function pointer
 	// which takes non-const reference
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline void set_decode_function(Delegate<Target, const Source&> t_func);
 
 	// source is no reference - invalid!
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline void set_decode_function(Delegate<Target, Source> t_func);
 }
 

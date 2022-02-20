@@ -36,12 +36,15 @@ namespace vrntzt::neat
 		_connections(t_connections),
 		_output_offset(t_net_dims.input_num + bias_num)
 	{
-		IO::debug("custom init of Simplistic_Phenotype\n");
+		if constexpr (SIMPLISTIC_PHENOTYPE_DEBUG)
+		{
+			IO::debug("custom init of Simplistic_Phenotype\n");
+		}
 
-		if (_connections.size() != output_num + hidden_neuron_num)
+		/*if (_connections.size() != output_num + hidden_neuron_num)
 		{
 			IO::error("invalid connection list size!");
-		}
+		}*/
 
 		_init_members();
 	}
@@ -57,7 +60,11 @@ namespace vrntzt::neat
 		hidden_neuron_num(0),
 		_connections(vector<vector<Connection>>())
 	{
-		IO::debug("Init Simplistic_Phenotype from Generic_Genome\n");
+		if constexpr (SIMPLISTIC_PHENOTYPE_DEBUG)
+		{
+			IO::debug("Init Simplistic_Phenotype from Generic_Genome\n");
+		}
+
 		IO::error("Not supported yet!\n");
 		_init_members();
 	}
@@ -106,7 +113,10 @@ namespace vrntzt::neat
 
 	void Simplistic_Phenotype::activate(int t_iterations)
 	{
-		IO::debug("activate network\n");
+		if constexpr (SIMPLISTIC_PHENOTYPE_DEBUG)
+		{
+			IO::debug("activate network\n");
+		}
 
 		// set bias
 		_neuron_states[0] = 1.0;
@@ -130,6 +140,15 @@ namespace vrntzt::neat
 		}
 	
 		_working = false;
+	}
+
+	void Simplistic_Phenotype::reset()
+	{
+		// clear internal states - not necessary for feedforward nets
+		for (auto& state : _neuron_states)
+		{
+			state = 0;
+		}
 	}
 
 	bool Simplistic_Phenotype::is_working() const

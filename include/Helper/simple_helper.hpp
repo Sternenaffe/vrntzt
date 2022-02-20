@@ -41,16 +41,17 @@ namespace vrntzt::neat
 			float t_weight);
 		// creates connection with random weight
 		Connection(const ushort t_source_neuron,
-			const ushort t_target_neuron);
+			const ushort t_target_neuron) = delete;
 
 		Connection(const Connection& t_other);
-		Connection& operator=(Connection);
+		//Connection& operator=(Connection t_other) = delete;
 
+		// members are not const because of assignment operator!
 		// includes input and output neurons
-		const ushort source_neuron = 0;
+		ushort source_neuron = 0;
 		// target is not really needed in this context cause corresponds
 		// to vector index
-		const ushort target_neuron = 0;
+		ushort target_neuron = 0;
 		float weight = 0.0;
 	};
 }

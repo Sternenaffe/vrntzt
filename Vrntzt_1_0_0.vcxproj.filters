@@ -49,6 +49,12 @@
     <Filter Include="src\Helper">
       <UniqueIdentifier>{979143e6-2724-462d-aa00-3b157091a415}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Evolution">
+      <UniqueIdentifier>{f0dd25c9-2817-4855-a277-1bd1d58d79bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Evolution">
+      <UniqueIdentifier>{d5e8b029-7f12-4831-9c87-ae8b117cd2ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\main.cpp">
@@ -80,6 +86,9 @@
     </ClCompile>
     <ClCompile Include="lib\utility\src\various.cpp">
       <Filter>lib\utility\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vrntzt_global.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +131,7 @@
     <ClInclude Include="lib\utility\include\trivial_typedefs.hpp">
       <Filter>lib\utility\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\global.hpp">
+    <ClInclude Include="include\vrntzt_global.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="lib\utility\include\fixed_vector.hpp">
@@ -134,6 +143,9 @@
     <ClInclude Include="include\Decoding\Simplistic_Decoder.hpp">
       <Filter>include\Decoding</Filter>
     </ClInclude>
+    <ClInclude Include="include\Evolution\Neat_Evolution_Manager.hpp">
+      <Filter>include\Evolution</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Decoding\Decoder.tpp">
@@ -141,6 +153,9 @@
     </None>
     <None Include="lib\utility\src\has_member.tpp">
       <Filter>lib\utility\src</Filter>
+    </None>
+    <None Include="src\Evolution\Neat_Evolution_Manager.tpp">
+      <Filter>src\Evolution</Filter>
     </None>
   </ItemGroup>
 </Project>

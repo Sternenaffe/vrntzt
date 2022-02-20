@@ -30,10 +30,10 @@ namespace vrntzt::neat
 
 	// concepts for controlling Target and Source of decode functions
 	template <class T>
-	concept Genome_Type = std::is_base_of<IGenotype<T>, T>::value;
+	concept Genotype_Type = std::is_base_of<IGenotype<T>, T>::value;
 
 	template <class T>
-	concept Phenome_Type = std::is_base_of<IPhenotype<T>, T>::value;
+	concept Phenotype_Type = std::is_base_of<IPhenotype<T>, T>::value;
 }
 
 #endif // !VRNTZT_CONCEPTS_HPP

@@ -22,13 +22,14 @@ namespace vrntzt::neat
 	Connection::Connection(const Connection& t_other)
 		:
 		source_neuron(t_other.source_neuron),
-		target_neuron(t_other.target_neuron)
+		target_neuron(t_other.target_neuron),
+		weight(t_other.weight)
 	{
-		weight = t_other.weight;
+		
 	}
 
-	Connection& Connection::operator=(Connection)
+	/*Connection& Connection::operator=(Connection t_other)
 	{
 		return *this;
-	}
+	}*/
 }

@@ -39,7 +39,7 @@
 
 //#include "lib/utility/include/fixed_vector.hpp"
 
-#include "include/global.hpp"
+#include "include/vrntzt_global.hpp"
 #include "include/Phenomes/IPhenotype.hpp"
 #include "include/Generic_Genome.hpp"
 #include "include/Helper/simple_helper.hpp"
@@ -47,6 +47,7 @@
 namespace vrntzt::neat
 {
 	// debug settings
+	constexpr bool SIMPLISTIC_PHENOTYPE_DEBUG = false;
 	constexpr bool ACTIVATE_CONN_DEBUG = false;
 
 	class Simplistic_Phenotype final : public IPhenotype<Simplistic_Phenotype>

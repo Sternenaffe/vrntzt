@@ -26,7 +26,7 @@ namespace vrntzt::neat::decoding
 	namespace _decoding_details
 	{
 		// default decoding routine with intermediate step via Generic_Genome
-		template <Genome_Type Source, Phenome_Type Target>
+		template <Genotype_Type Source, Phenotype_Type Target>
 		inline Target default_decode(Source& t_source)
 		{
 			//IO::debug("default decode from " + static_cast<std::string>(typeid(Source).name())
@@ -38,20 +38,20 @@ namespace vrntzt::neat::decoding
 
 		// template variable
 		// stores function pointers to decode functions
-		template <Genome_Type Source, Phenome_Type Target>
+		template <Genotype_Type Source, Phenotype_Type Target>
 		Delegate<Target, Source&> decode_func =
 			&default_decode<Source, Target>;
 	}
 
 	// decode Source Genome into Target via stored function pointer
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline Target decode(Source& t_source)
 	{
 		return _decoding_details::decode_func<Source, Target>(t_source);
 	}
 
 	// sets user-defined decode method for specific conversion
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline void set_decode_function(Delegate<Target, Source&> t_func)
 	{
 		_decoding_details::decode_func<Source, Target> = t_func;
@@ -60,14 +60,14 @@ namespace vrntzt::neat::decoding
 	// overload if function takes const Source - invalid!
 	// function pointer which takes const ref is not castable to function pointer
 	// which takes non-const reference
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline void set_decode_function(Delegate<Target, const Source&> t_func)
 	{
 		static_assert(false, "A 'const reference' source parameter is not allowed");
 	}
 
 	// source is no reference - invalid!
-	template <Genome_Type Source, Phenome_Type Target>
+	template <Genotype_Type Source, Phenotype_Type Target>
 	inline void set_decode_function(Delegate<Target, Source> t_func)
 	{
 		// would casting of function pointers be possible?

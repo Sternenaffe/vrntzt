@@ -24,6 +24,8 @@
 
 namespace vrntzt::neat::decoding
 {
+	constexpr bool SIMPLISTIC_DECODING_DEBUG = false;
+
 	// adds decode functions to decoder
 	void init_simplistic_decode();
 
