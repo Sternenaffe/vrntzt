@@ -7,10 +7,11 @@
 
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 #include "lib/IO/IO.hpp"
 
-#include "include/Phenomes/Simplistic_Phenotype.hpp"
+#include "include/Phenotype/Simplistic_Phenotype.hpp"
 
 namespace vrntzt::neat
 {
@@ -78,6 +79,12 @@ namespace vrntzt::neat
 	{
 		_neuron_states = vector<internal_type>(fixed_neuron_num +
 			hidden_neuron_num);
+	}
+
+	internal_type Simplistic_Phenotype::_activation_f(const internal_type t_value)
+	{
+		// values taken from stanley.ec02.pdf (MIT paper)
+		return 1 / (1 + exp(-4.9f * t_value));
 	}
 
 	void Simplistic_Phenotype::set_input(const int t_index,
@@ -198,5 +205,8 @@ namespace vrntzt::neat
 
 			_neuron_states[t_neuron] += temp_add;
 		}
+
+		// apply activation function
+		_neuron_states[t_neuron] = _activation_f(_neuron_states[t_neuron]);
 	}
 }

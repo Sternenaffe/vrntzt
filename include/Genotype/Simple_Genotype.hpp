@@ -26,7 +26,7 @@
 #ifndef Simple_Genotype_HPP
 #define Simple_Genotype_HPP
 
-#include "include/Genomes/IGenotype.hpp"
+#include "include/Genotype/IGenotype.hpp"
 #include "include/Generic_Genome.hpp"
 
 namespace vrntzt::neat

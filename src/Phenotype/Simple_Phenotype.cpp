@@ -5,7 +5,7 @@
 // NEAT source
 // Simple Phenome
 
-#include "include/Phenomes/Simple_Phenotype.hpp"
+#include "include/Phenotype/Simple_Phenotype.hpp"
 
 namespace vrntzt::neat
 {

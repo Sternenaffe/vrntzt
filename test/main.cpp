@@ -5,8 +5,6 @@
 // original neat:
 // https://github.com/F3R70/NEAT
 
-ACTIVATION FN IS NOT IMPLEMENTED!!! FITNESS CANCELS OUT!
-
 #include <iostream>
 #include <vector>
 
@@ -15,8 +13,8 @@ ACTIVATION FN IS NOT IMPLEMENTED!!! FITNESS CANCELS OUT!
 #include "include/Evolution/Neat_Evolution_Manager.hpp"
 #include "include/Decoding/Decoder.hpp"
 #include "include/Decoding/Simplistic_Decoder.hpp"
-#include "include/Genomes/Simplistic_Genotype.hpp"
-#include "include/Phenomes/Simplistic_Phenotype.hpp"
+#include "include/Genotype/Simplistic_Genotype.hpp"
+#include "include/Phenotype/Simplistic_Phenotype.hpp"
 //#include "../include/Generic_Genome.hpp"
 
 using namespace vrntzt::neat;
@@ -63,29 +61,28 @@ int main()
 {
 	decoding::init_simplistic_decode();
 
-	// test
-	Simplistic_Genotype test_genotype(2, 1);
-	for (int i = 0; i < 10; ++i)
-	{
-		test_genotype = test_genotype.mutate();
-	}
-	eval_xor(&test_genotype);
-	return 0;
+	//// test
+	//Simplistic_Genotype test_genotype(2, 1);
+	//for (int i = 0; i < 10; ++i)
+	//{
+	//	test_genotype = test_genotype.mutate();
+	//}
+	//eval_xor(&test_genotype);
+	//return 0;
 	
 
 	Neat_Evolution_Settings ev_settings;
-	ev_settings.population_size = 20;
+	ev_settings.population_size = 100;
 	Neat_Evolution_Manager<Simplistic_Genotype, Simplistic_Phenotype>
 		ev_manager(2, 1, ev_settings);
 
 	ev_manager.create_random_population();
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 500; ++i)
 	{
 		// get fitness
 		for (auto& genotype : ev_manager.get_population())
 		{
-
 			genotype->set_fitness(eval_xor(genotype.get()));
 		}
 
@@ -94,11 +91,11 @@ int main()
 
 		ev_manager.evolve_population();
 
-		for (auto& genotype : ev_manager.get_population())
+		/*for (auto& genotype : ev_manager.get_population())
 		{
 			IO::debug(genotype->get_genomes_string());
 			IO::debug("\n");
-		}
+		}*/
 	}
 	
 	return 0;

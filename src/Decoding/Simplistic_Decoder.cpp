@@ -11,8 +11,8 @@
 
 #include "lib/IO/IO.hpp"
 
-#include "include/Genomes/Simplistic_Genotype.hpp"
-#include "include/Phenomes/Simplistic_Phenotype.hpp"
+#include "include/Genotype/Simplistic_Genotype.hpp"
+#include "include/Phenotype/Simplistic_Phenotype.hpp"
 
 using std::vector;
 

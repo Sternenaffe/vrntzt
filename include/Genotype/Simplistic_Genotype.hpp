@@ -69,10 +69,10 @@
 #ifndef SIMPLISTIC_GENOTYPE_HPP
 #define SIMPLISTIC_GENOTYPE_HPP
 
-#include "include/Genomes/IGenotype.hpp"
+#include "include/Genotype/IGenotype.hpp"
 #include "include/Generic_Genome.hpp"
 
-#include "include/Helper/simple_helper.hpp"
+#include "src/Helper/simple_helper.hpp"
 
 namespace vrntzt::neat
 {
@@ -133,7 +133,7 @@ namespace vrntzt::neat
 
 		// determines how often sexual and asexual respectively
 		// reproduction will occur
-		const int sexual_reproduction_chance = 80 * 1000;
+		const int sexual_reproduction_chance = 75 * 1000;
 
 		// chance that excess/disjoint genomes are picked when
 		// parent fitness is same
@@ -144,8 +144,8 @@ namespace vrntzt::neat
 		// probability that connection will get completely new weight
 		const int randomize_weight_chance = 10 * 1000;
 
-		const int add_neuron_chance = 30 * 1000;
-		const int add_connection_chance = 50 * 1000;
+		const int add_neuron_chance = 3 * 1000;
+		const int add_connection_chance = 5 * 1000;
 
 	public:
 		// forward dec

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -18,51 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="lib\IO\IO.cpp" />
-    <ClCompile Include="lib\utility\src\fixed_vector.cpp" />
-    <ClCompile Include="lib\utility\src\various.cpp" />
-    <ClCompile Include="src\Decoding\Simplistic_Decoder.cpp" />
-    <ClCompile Include="src\Genomes\Simple_Genotype.cpp" />
-    <ClCompile Include="src\Genomes\Simplistic_Genotype.cpp" />
-    <ClCompile Include="src\Helper\simple_helper.cpp" />
-    <ClCompile Include="src\Phenomes\Simple_Phenotype.cpp" />
-    <ClCompile Include="src\Phenomes\Simplistic_Phenotype.cpp" />
-    <ClCompile Include="src\vrntzt_global.cpp" />
-    <ClCompile Include="test\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Decoding\Decoder.hpp" />
-    <ClInclude Include="include\Decoding\Simplistic_Decoder.hpp" />
-    <ClInclude Include="include\Evolution\Neat_Evolution_Manager.hpp" />
-    <ClInclude Include="include\Generic_Genome.hpp" />
-    <ClInclude Include="include\Genomes\IGenotype.hpp" />
-    <ClInclude Include="include\Genomes\Simple_Genotype.hpp" />
-    <ClInclude Include="include\Genomes\Simplistic_Genotype.hpp" />
-    <ClInclude Include="include\vrntzt_global.hpp" />
-    <ClInclude Include="include\Helper\simple_helper.hpp" />
-    <ClInclude Include="include\Phenomes\IPhenotype.hpp" />
-    <ClInclude Include="include\Phenomes\Simple_Phenotype.hpp" />
-    <ClInclude Include="include\Phenomes\Simplistic_Phenotype.hpp" />
-    <ClInclude Include="lib\IO\IO.hpp" />
-    <ClInclude Include="lib\utility\include\fixed_vector.hpp" />
-    <ClInclude Include="lib\utility\include\has_member.hpp" />
-    <ClInclude Include="lib\utility\include\trivial_typedefs.hpp" />
-    <ClInclude Include="lib\utility\include\various.hpp" />
-    <ClInclude Include="src\vrntzt_concepts.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="lib\utility\src\has_member.tpp" />
-    <None Include="src\Decoding\Decoder.tpp" />
-    <None Include="src\Evolution\Neat_Evolution_Manager.tpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d53194eb-aae7-44f9-a3a3-f88db79a252b}</ProjectGuid>
-    <RootNamespace>Vrntzt100</RootNamespace>
+    <ProjectGuid>{d0afba01-ad29-4fa7-a3f6-a90492d184d5}</ProjectGuid>
+    <RootNamespace>vrntzt10</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>vrntzt_1_0_0</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -111,15 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,7 +93,6 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,7 +108,6 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,7 +123,6 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -176,7 +138,6 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,6 +146,48 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\IO\IO.cpp" />
+    <ClCompile Include="lib\utility\src\fixed_vector.cpp" />
+    <ClCompile Include="lib\utility\src\various.cpp" />
+    <ClCompile Include="src\Decoding\Simplistic_Decoder.cpp" />
+    <ClCompile Include="src\Genotype\Simple_Genotype.cpp" />
+    <ClCompile Include="src\Genotype\Simplistic_Genotype.cpp" />
+    <ClCompile Include="src\Helper\simple_helper.cpp" />
+    <ClCompile Include="src\Phenotype\Simple_Phenotype.cpp" />
+    <ClCompile Include="src\Phenotype\Simplistic_Phenotype.cpp" />
+    <ClCompile Include="src\vrntzt_global.cpp" />
+    <ClCompile Include="test\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Decoding\Decoder.hpp" />
+    <ClInclude Include="include\Decoding\Simplistic_Decoder.hpp" />
+    <ClInclude Include="include\Evolution\Neat_Evolution_Manager.hpp" />
+    <ClInclude Include="include\Generic_Genome.hpp" />
+    <ClInclude Include="include\Genotype\IGenotype.hpp" />
+    <ClInclude Include="include\Genotype\Simple_Genotype.hpp" />
+    <ClInclude Include="include\Genotype\Simplistic_Genotype.hpp" />
+    <ClInclude Include="include\Phenotype\IPhenotype.hpp" />
+    <ClInclude Include="include\Phenotype\Simple_Phenotype.hpp" />
+    <ClInclude Include="include\Phenotype\Simplistic_Phenotype.hpp" />
+    <ClInclude Include="include\vrntzt_global.hpp" />
+    <ClInclude Include="lib\IO\IO.hpp" />
+    <ClInclude Include="lib\utility\empty_header.hpp" />
+    <ClInclude Include="lib\utility\include\fixed_vector.hpp" />
+    <ClInclude Include="lib\utility\include\has_member.hpp" />
+    <ClInclude Include="lib\utility\include\interface.hpp" />
+    <ClInclude Include="lib\utility\include\trivial_typedefs.hpp" />
+    <ClInclude Include="lib\utility\include\various.hpp" />
+    <ClInclude Include="src\Helper\simple_helper.hpp" />
+    <ClInclude Include="src\Helper\Species.hpp" />
+    <ClInclude Include="src\vrntzt_concepts.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\utility\src\has_member.tpp" />
+    <None Include="src\Decoding\Decoder.tpp" />
+    <None Include="src\Evolution\Neat_Evolution_Manager.tpp" />
+    <None Include="src\Helper\Species.tpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

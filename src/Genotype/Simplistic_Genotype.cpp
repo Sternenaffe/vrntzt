@@ -16,7 +16,7 @@
 #include "lib/IO/IO.hpp"
 
 #include "include/vrntzt_global.hpp"
-#include "include/Genomes/Simplistic_Genotype.hpp"
+#include "include/Genotype/Simplistic_Genotype.hpp"
 
 namespace vrntzt::neat
 {

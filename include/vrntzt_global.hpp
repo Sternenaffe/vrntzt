@@ -32,6 +32,8 @@ namespace vrntzt::neat
 {
 	// global debug settings
 	constexpr bool RELEASE_BUILD = false;
+
+	using internal_type = float;
 }
 
 #endif // !VRNTZT_GLOBAL_HPP

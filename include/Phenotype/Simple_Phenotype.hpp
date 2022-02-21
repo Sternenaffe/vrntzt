@@ -19,7 +19,7 @@
 #ifndef Simple_Phenotype_HPP
 #define Simple_Phenotype_HPP
 
-#include "include/Phenomes/IPhenotype.hpp"
+#include "include/Phenotype/IPhenotype.hpp"
 #include "include/Generic_Genome.hpp"
 
 namespace vrntzt::neat

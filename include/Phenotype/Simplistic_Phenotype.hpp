@@ -33,6 +33,7 @@
 // TODO: implement bound-checking
 // TODO - IMPORTANT: pointer/reference for Connection array
 // TODO: should use half instead of float (?)
+// TODO: implement modular activation fn
 
 #ifndef Simple_Phenotype_HPP
 #define Simple_Phenotype_HPP
@@ -40,9 +41,9 @@
 //#include "lib/utility/include/fixed_vector.hpp"
 
 #include "include/vrntzt_global.hpp"
-#include "include/Phenomes/IPhenotype.hpp"
+#include "include/Phenotype/IPhenotype.hpp"
 #include "include/Generic_Genome.hpp"
-#include "include/Helper/simple_helper.hpp"
+#include "src/Helper/simple_helper.hpp"
 
 namespace vrntzt::neat
 {
@@ -104,7 +105,8 @@ namespace vrntzt::neat
 		// inits all members which have default values
 		void _init_members();
 
-		//internal_type activation_f(const internal_type t_value);
+		// sigmoid
+		internal_type _activation_f(const internal_type t_value);
 
 		void _update_neuron_state(const ushort t_neuron);
 

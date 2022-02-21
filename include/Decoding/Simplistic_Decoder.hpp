@@ -19,8 +19,8 @@
 #define VRNTZT_SIMPLISTIC_DECODER_HPP
 
 #include "Decoder.hpp"
-#include "include/Genomes/Simplistic_Genotype.hpp"
-#include "include/Phenomes/Simplistic_Phenotype.hpp"
+#include "include/Genotype/Simplistic_Genotype.hpp"
+#include "include/Phenotype/Simplistic_Phenotype.hpp"
 
 namespace vrntzt::neat::decoding
 {

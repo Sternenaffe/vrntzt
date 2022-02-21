@@ -5,7 +5,7 @@
 // NEAT source
 // Simple Genome
 
-#include "include/Genomes/Simple_Genotype.hpp"
+#include "include/Genotype/Simple_Genotype.hpp"
 
 namespace vrntzt::neat
 {
