@@ -1,6 +1,7 @@
 // test file
 
 // TODO: replace similar variable names in the whole project
+// TODO: exclude second bound when getting random integers from Random_Generator
 
 // original neat:
 // https://github.com/F3R70/NEAT

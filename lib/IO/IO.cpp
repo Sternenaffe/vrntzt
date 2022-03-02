@@ -26,6 +26,7 @@ namespace IO
 
 	IO_Error warning(string t_string)
 	{
+		std::cout << "Warning: " << t_string;
 		return IO_Error::no_error;
 	}
 

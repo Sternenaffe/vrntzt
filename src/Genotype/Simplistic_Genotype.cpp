@@ -86,6 +86,8 @@ namespace vrntzt::neat
 		if (t_first.innovation_num != t_second.innovation_num)
 		{
 			IO::error("Genome::crossover: Genomes aren't compatible!\n");
+			// arbitrary return to make warning go away
+			return t_first;
 		}
 
 		else
@@ -304,6 +306,22 @@ namespace vrntzt::neat
 		}
 
 		return distance;
+	}
+
+	Reproduction_Type Simplistic_Genotype::get_reproduction_type()
+	{
+		if (r_gen.randint(max_chance) <= interspecies_reproduction_chance)
+		{
+			return Reproduction_Type::interspecies_reproduction;
+		}
+		else if (r_gen.randint(max_chance) <= sexual_reproduction_chance)
+		{
+			return Reproduction_Type::sexual_reproduction;
+		}
+		else
+		{
+			return Reproduction_Type::asexual_reproduction;
+		}
 	}
 
 	Simplistic_Genotype Simplistic_Genotype::create_offspring(

@@ -22,8 +22,8 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <sstream>
 // #include <cmath>
-#include <numeric>
 
 #include "lib/IO/IO.hpp"
 #include <lib/utility/include/trivial_typedefs.hpp>
@@ -57,7 +57,6 @@ namespace vrntzt::neat
 		_population_size = t_settings.population_size;
 		_species_count = t_settings.species_count;
 		_interspecies_mating_chance = t_settings.interspecies_mating_chance;
-		_num_old_species = 0;
 	}
 
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
@@ -81,71 +80,125 @@ namespace vrntzt::neat
 			IO::debug("creating random population\n");
 		}
 		
-		for (int i = 0; i < _population_size; ++i)
+		for (uint i = 0; i < _population_size; ++i)
 		{
-			std::unique_ptr<Genotype> tmp = std::make_unique<Genotype>(
+			std::shared_ptr<Genotype> tmp = std::make_shared<Genotype>(
 				_input_num, _output_num);
 			_population.push_back(std::move(tmp));
 		}
 	}
 
+	// function is not written in the most efficient way - could merge multiple
+	// loops; instead the evolution steps are as explicit as possible
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
 	void Neat_Evolution_Manager<Genotype, Phenotype>::evolve_population()
 	{
-		using std::vector;
+		if constexpr (NEAT_EVOLUTION_MANAGER_MATING_DEBUG)
+		{
+			IO::debug("old population size: " + std::to_string(_population.size()) +
+				"\n");
+		}
 
-		Genotype_Container<Genotype> new_population;
-
+		// evaluate which species should be transfered to next generation, this
+		// is in order to track species over multiple generations
+		_eliminate_weak_species();
 		_speciate_population();
-		_calculate_species_sq_avg_fitness();
 
-		auto species_iter = _species.begin();
-		auto species_fitness_iter = _species_sq_avg_fitness.begin();
-
-		// loop through species and produce offspring
-		while (species_iter != _species.end() &&
-			species_fitness_iter != _species_sq_avg_fitness.end())
+		// calculate species fitness
+		for (Species<Genotype>& species : _species)
 		{
-			// calculate number of offsprings based on species fitness
-			// formular from NEAT paper
-			// need to round in order to get full population size
-			int offspring_num = 0;
-			// every species (and individual for that matter) have a fitness of zero
-			// -> split evenly
-			if (_total_species_fitness == 0)
-			{
-				offspring_num = static_cast<int>(std::round(_population_size /
-					_species.size()));
-			}
-			else
-			{
-				offspring_num = static_cast<int>(std::round(*species_fitness_iter /
-					_total_species_fitness * _population_size));
-			}
-			
-			// champions will be inserted separately
-			--offspring_num;
-
-			Genotype_Container<Genotype> species_offspring =
-				_produce_species_offspring(*species_iter, offspring_num);
-
-			// append offsprings to population
-			for (auto& offspring : species_offspring)
-			{
-				new_population.push_back(std::move(offspring));
-			}
-
-			++species_iter;
-			++species_fitness_iter;
+			species.calculate_generation_metrics();
 		}
 
-		_reset_population();
-		// population will be empty except for champions: append new offspring
-		// append offsprings to population
-		for (auto& offspring : new_population)
+		// remove species if their fitness is stagnating (obviously only
+		// possible if not a new species)
+		_eliminate_stagnating_species();
+		// returns elite genotypes which should be inherited unmodified
+		Genotype_Container<Genotype> elite = _get_champions();
+
+		_population.clear();
+
+		_total_species_fitness = 0.0f;
+		// prepare species for mating
+		for (Species<Genotype>& species : _species)
 		{
-			_population.push_back(std::move(offspring));
+			_total_species_fitness += species.get_fitness_sq_avg();
+			// don't move to _produce_species_offspring because interspecies
+			// mating needs every species to be ready for mating
+			species.eliminate_weak_individuals();
 		}
+		
+		int total_offspring_num = _population_size - elite.size();
+
+		// mating
+		for (Species<Genotype>& species : _species)
+		{
+			int offspring_num = _calculate_offspring_num(total_offspring_num,
+				species);
+			// adds offspring directly to population
+			_produce_species_offspring(species, offspring_num);
+		}
+
+		uint missing_individuals = total_offspring_num - _population.size();
+
+		if constexpr (NEAT_EVOLUTION_MANAGER_MATING_DEBUG)
+		{
+			IO::debug("generating " + std::to_string(missing_individuals) + " missing individuals\n");
+		}
+
+		// _calculate_offspring_num might generate to few individuals -> fill
+		// population with random interspecies mated individuals
+		for (uint i = 0; i < missing_individuals; ++i)
+		{
+			// get random individual from random species and perform interspecies
+			// mating
+			Species<Genotype>& random_species = r_gen.random_item(_species);
+			std::shared_ptr<Genotype>& first_parent = r_gen.random_item(
+				random_species);
+
+			// if (_species.size() > 1) - dont need to check cause if there was
+			// only one species the offspring number has to be correct
+			_population.push_back(_interspecies_reproduction(first_parent,
+				random_species));
+		}
+
+		// add elite to population
+		for (std::shared_ptr<Genotype>& genotype : elite)
+		{
+			_population.push_back(std::move(genotype));
+		}
+
+		// adjust compatibility threshold (unelegant)
+		if (_species.size() < _species_count)
+		{
+			float random_num = r_gen.rand(0.95f, 0.99f);
+			IO::debug("random num: " + std::to_string(random_num) + "\n");
+			_compatibility_threshold *= random_num;
+		}
+		else if (_species.size() > _species_count)
+		{
+			float random_num = r_gen.rand(1.01f, 1.05f);
+			IO::debug("random num: " + std::to_string(random_num) + "\n");
+			_compatibility_threshold *= random_num;
+		}
+
+		return;
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::_eliminate_weak_species()
+	{
+		typename std::vector<Species<Genotype>> new_species;
+
+		for (Species<Genotype>& species : _species)
+		{
+			if (species.size() >= _population_size / _species_count)
+			{
+				new_species.push_back(species);
+			}
+		}
+
+		_species = new_species;
 	}
 
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
@@ -156,53 +209,32 @@ namespace vrntzt::neat
 			IO::debug("speciate population\n");
 		}
 
-		using std::vector;
-
-		typename Genotype_Container<Genotype>::iterator iter = _population.begin();
-
-		// take first individuum as reference and place in new species
-		// if this is first generation
-		// else: existing species will be continue to exist
-		if (_species.size() == 0)
+		// reset species
+		for (Species<Genotype>& species : _species)
 		{
-			Genotype* first_genotype = iter->get();
-			vector<Genotype*> new_species = { first_genotype };
-			_species.push_back(new_species);
-			++iter;
-		}
-		// first portion of Genotypes in population are champions from the previous
-		// generation and therefor already in a species - don't need to insert them
-		// again!
-		else
-		{
-			iter += _num_old_species;
+			species.reset_for_next_gen();
 		}
 
 		// loop through whole population and create new species if 
-		// the compatibility threshold is exceeded
-		for (; iter < _population.end(); ++iter)
+		// matches no existing species
+		for (std::shared_ptr<Genotype>& genotype : _population)
 		{
-			bool make_new_species = true;
-			Genotype* current_genotype = iter->get();
+			bool added_to_species = false;
 
-			// loop through species and see if distance matches
-			for (vector<Genotype*>& species : _species)
+			for (Species<Genotype>& species : _species)
 			{
-				Genotype* species_ref = *species.begin();
+				added_to_species = species.add_if_compatible(
+					genotype, _compatibility_threshold);
 
-				if (species_ref->distance(*current_genotype) < _compatibility_threshold)
+				if (added_to_species)
 				{
-					species.push_back(current_genotype);
-					make_new_species = false;
 					break;
 				}
 			}
 
-			// no matching species: create new
-			if (make_new_species)
+			if (!added_to_species)
 			{
-				vector<Genotype*> new_species = { current_genotype };
-				_species.push_back(new_species);
+				_species.push_back(Species<Genotype>(genotype));
 			}
 		}
 
@@ -211,6 +243,8 @@ namespace vrntzt::neat
 			using std::to_string;
 
 			IO::debug("\nSpecies: \n");
+			IO::debug("compatibility_threshold: " +
+				std::to_string(_compatibility_threshold) + "\n");
 
 			size_t species_num = 0;
 			for (auto& species : _species)
@@ -221,204 +255,154 @@ namespace vrntzt::neat
 			}
 		}
 	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::_eliminate_stagnating_species()
+	{
+		typename std::vector<Species<Genotype>> tmp_species;
+
+		for (Species<Genotype>& species : _species)
+		{
+			if (!species.is_stagnating() && species.size() > 0)
+			{
+				tmp_species.push_back(species);
+			}
+		}
+
+		// only delete if not every species is stagnating
+		if (tmp_species.size() > 0)
+		{
+			_species = tmp_species;
+		}
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	Genotype_Container<Genotype> Neat_Evolution_Manager<Genotype, Phenotype>::
+		_get_champions()
+	{
+		Genotype_Container<Genotype> elite;
+
+		for (Species<Genotype>& species : _species)
+		{
+			elite.push_back(species.get_champion());
+		}
+
+		return elite;
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	int Neat_Evolution_Manager<Genotype, Phenotype>::_calculate_offspring_num(
+		int t_total_offspring_num, Species<Genotype>& t_species)
+	{
+		// normal calculation - depends on species fitness share in total fitness
+		if (_total_species_fitness > 0)
+		{
+			float portion = t_species.get_fitness_sq_avg() /
+				_total_species_fitness;
+			int offspring_num = static_cast<int>(portion * t_total_offspring_num);
+
+			if constexpr(NEAT_EVOLUTION_MANAGER_MATING_DEBUG)
+			{
+				std::ostringstream tmp_string;
+
+				tmp_string << "Species offspring:\n" <<
+					"Percent of total fitness: " << (portion * 100) << "%\n" <<
+					"Assigned offspring: " << offspring_num << "/"
+					<< t_total_offspring_num << "\n";
+
+				IO::debug(tmp_string.str());
+			}
+
+			return offspring_num;
+		}
+		// should not occur
+		else if (_total_species_fitness == 0)
+		{
+			IO::warning("total species fitness is zero - this means that no "
+				"individual has a fitness different from zero\n");
+			// not a good way to calculate offspring num - should depend on
+			// share of species in propagative population, but would be
+			// more complicated to calculate and should not be necessary in the
+			// first place
+			return t_total_offspring_num / _species.size();
+		}
+		else
+		{
+			IO::error("total fitness must not be negative\n");
+			return -1;
+		}
+	}
 	
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
-	Genotype_Container<Genotype> Neat_Evolution_Manager<Genotype, Phenotype>::
-		_produce_species_offspring(std::vector<Genotype*>& t_species,
+	void Neat_Evolution_Manager<Genotype, Phenotype>::
+		_produce_species_offspring(Species<Genotype>& t_species,
 			int t_offspring_num)
 	{
-		Genotype_Container<Genotype> offspring;
-
-		_eliminate_weak_individuals(t_species);
-
-		// create rest (via intra- and interspecies mating)
-		// starts at 1 cause champions is first offspring
+		// mutation, intra- and interspecies mating
 		for (int i = 0; i < t_offspring_num; ++i)
 		{
-			// check if interspecies mating
-			if (r_gen.rand() < _interspecies_mating_chance)
+			std::shared_ptr<Genotype>& first_parent =
+				t_species.get_random_individual();
+			Reproduction_Type reproduce_via =
+				first_parent->get_reproduction_type();
+
+			if (reproduce_via == Reproduction_Type::interspecies_reproduction
+				&& _species.size() > 1)
 			{
-				Genotype* first_parent = r_gen.random_item(t_species);
-				// choose other random species without check if is same
-				std::vector<Genotype*>& random_species = r_gen.random_item(_species);
-				Genotype* second_parent = r_gen.random_item(random_species);
-
-				Genotype new_offspring = Genotype::create_offspring(*first_parent,
-					*second_parent);
-				std::unique_ptr<Genotype> new_offspring_ptr =
-					std::make_unique<Genotype>(new_offspring);
-				offspring.push_back(std::move(new_offspring_ptr));
+				_population.push_back(_interspecies_reproduction(first_parent,
+					t_species));
 			}
-
-			// normal reproduction
-			else if (t_species.size() > 1)
+			// sexual reproduction is intraspecies - need to have at least one
+			// individual in species
+			else if (reproduce_via == Reproduction_Type::sexual_reproduction
+				&& t_species.size() > 1)
 			{
-				using std::get;
-
-				std::tuple<Genotype*, Genotype*> parents =
-					r_gen.random_item_pair(t_species);
-
-				// sexual reproduction
-				if (get<0>(parents)->perform_sexual_reproduction())
-				{
-					Genotype new_offspring = Genotype::create_offspring(
-						*get<0>(parents), *get<1>(parents));
-					std::unique_ptr<Genotype> new_offspring_ptr =
-						std::make_unique<Genotype>(new_offspring);
-					offspring.push_back(std::move(new_offspring_ptr));
-
-				}
-				// asexual reproduction
-				else
-				{
-					Genotype new_offspring = get<0>(parents)->mutate();
-					std::unique_ptr<Genotype> new_offspring_ptr =
-						std::make_unique<Genotype>(new_offspring);
-					offspring.push_back(std::move(new_offspring_ptr));
-				}
+				_population.push_back(_sexual_reproduction(first_parent,
+					t_species));
 			}
-
-			// reproduction if not enough individuals for intraspecies mating
-			// -> asexual reproduction
+			// asexual reproduction (mutation)
 			else
 			{
-				Genotype* parent = r_gen.random_item(t_species);
-				Genotype new_offspring = parent->mutate();
-				std::unique_ptr<Genotype> new_offspring_ptr =
-					std::make_unique<Genotype>(new_offspring);
-				offspring.push_back(std::move(new_offspring_ptr));
-			}
-		}
-
-		return offspring;
-	}
-
-	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
-	void Neat_Evolution_Manager<Genotype, Phenotype>::_reset_population()
-	{
-		// need to check if is stagnant!
-		// maybe check if fitness of old champion is smaller?
-
-		using std::vector;
-
-		// store champions when population is reseted
-		Genotype_Container<Genotype> tmp_champion_storage;
-
-		// loop through all species & move champion pointers
-		for (vector<Genotype*>& species : _species)
-		{
-			Genotype* old_champion = _find_champion(species);
-			std::unique_ptr<Genotype> champion =
-				std::make_unique<Genotype>(*old_champion);
-			tmp_champion_storage.push_back(std::move(champion));
-		}
-
-		// reset all population related informations
-		_population.clear();
-		_num_old_species = _species.size();
-		_species.clear();
-
-		// old champions are new population
-		// IMPORTANT: RESET_POPULATION AND SPECIATE_POPULATION
-		//			  RELY THAT CHAMPIONS ARE AT FRONT OF
-		// POPULATION! NEED TO CHANGE FUNCTION IF THAT'S NOT GUARANTEED ANYMORE!
-		_population = std::move(tmp_champion_storage);
-		// every champion is in own species
-		for (std::unique_ptr<Genotype>& champion : _population)
-		{
-			vector<Genotype*> new_species = { champion.get() };
-			_species.push_back(std::move(new_species));
-		}
-	}
-
-	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
-	void Neat_Evolution_Manager<Genotype, Phenotype>::
-		_calculate_species_sq_avg_fitness()
-	{
-		using std::vector;
-
-		// lambda for adding fitness
-		auto add_fitness = [](const float& t_total,
-			const Genotype* t_next)
-		{
-			float fitness = t_next->get_fitness();
-
-			if (fitness < 0)
-			{
-				IO::error("error: genotypes has negative fitness\n");
-			}
-
-			return t_total + fitness;
-		};
-
-		_species_sq_avg_fitness.clear();
-		_total_species_fitness = 0;
-
-		for (vector<Genotype*>& species : _species)
-		{
-			double fitness_sum = std::accumulate(species.begin(), species.end(),
-				0.0f, add_fitness);
-			float sq_fitness = static_cast<float>(fitness_sum /
-				pow(species.size(), 2));
-
-			_species_sq_avg_fitness.push_back(sq_fitness);
-			_total_species_fitness += sq_fitness;
-		}
-
-		if constexpr (NEAT_EVOLUTION_MANAGER_EVOLUTION_DEBUG)
-		{
-			using std::to_string;
-
-			IO::debug("\nSpecies square average: \n");
-			IO::debug("Total fitness sum: " + to_string(_total_species_fitness) + "\n");
-
-			for (size_t i = 0; i < _species.size(); ++i)
-			{
-				IO::debug("Species " + to_string(i) + " fitness: " +
-					to_string(_species_sq_avg_fitness[i]) + "\n");
+				_population.push_back(_asexual_reproduction(first_parent));
 			}
 		}
 	}
 
-	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
-	Genotype* Neat_Evolution_Manager<Genotype, Phenotype>::
-		_find_champion(std::vector<Genotype*>& t_genotypes)
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	std::shared_ptr<Genotype> Neat_Evolution_Manager<Genotype, Phenotype>::
+		_interspecies_reproduction(std::shared_ptr<Genotype>& t_first_parent,
+			Species<Genotype>& t_first_parent_species)
 	{
-		typename std::vector<Genotype*>::iterator champion_iter =
-			t_genotypes.begin();
+		// choose random individual from different species
+		Species<Genotype>& random_species = r_gen.different_random_item(
+			_species, t_first_parent_species);
+		std::shared_ptr<Genotype>& second_parent = 
+			random_species.get_random_individual();
 
-		// find champion genotype
-		for (typename std::vector<Genotype*>::iterator iter = t_genotypes.begin();
-			iter != t_genotypes.end(); ++iter)
-		{
-			// check if new champion
-			if ((*iter)->get_fitness() > (*champion_iter)->get_fitness())
-			{
-				champion_iter = iter;
-			}
-		}
-
-		return *champion_iter;
+		Genotype new_offspring = Genotype::create_offspring(
+			*t_first_parent, *second_parent);
+		return std::make_shared<Genotype>(std::move(new_offspring));
 	}
 
-	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
-	void Neat_Evolution_Manager<Genotype, Phenotype>::
-		_eliminate_weak_individuals(std::vector<Genotype*>& t_species)
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	std::shared_ptr<Genotype> Neat_Evolution_Manager<Genotype, Phenotype>::
+		_sexual_reproduction(std::shared_ptr<Genotype>& t_first_parent,
+			Species<Genotype>& t_first_parent_species)
 	{
-		// comparison lambda: returns true if first arg is smaller
-		auto comp_genotypes = [](const Genotype* genotype1,
-			const Genotype* genotype2)
-		{
-			return genotype1->get_fitness() < genotype2->get_fitness();
-		};
+		std::shared_ptr<Genotype> second_parent = t_first_parent_species.
+			get_different_random_individual(t_first_parent);
 
-		std::sort(t_species.begin(), t_species.end(), comp_genotypes);
+		Genotype new_offspring = Genotype::create_offspring(
+			*t_first_parent, *second_parent);
+		return std::make_shared<Genotype>(std::move(new_offspring));
+	}
 
-		// remove first '(1 - PROPAGABLE_FRACTION) * total' genotypes
-		// which have lowest fitness
-		size_t remove_num = static_cast<int>((1 - PROPAGABLE_FRACTION) *
-			t_species.size());
-		t_species.erase(t_species.begin(), t_species.begin() + remove_num);
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	std::shared_ptr<Genotype> Neat_Evolution_Manager<Genotype, Phenotype>::
+		_asexual_reproduction(std::shared_ptr<Genotype>& t_first_parent)
+	{
+		Genotype new_offspring = t_first_parent->mutate();
+		return std::make_shared<Genotype>(std::move(new_offspring));
 	}
 }
 

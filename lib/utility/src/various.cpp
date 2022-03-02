@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../include/various.hpp"
+#include "../../IO/IO.hpp"
 
 namespace u_lib
 {
@@ -77,6 +78,11 @@ namespace u_lib
 		float r = static_cast<float>(_mt());
 		float divisor = static_cast<float>(_mt.max() / (t_max - t_min));
 		return t_min + r / divisor;
+	}
+
+	bool Random_Generator::chance(float t_chance)
+	{
+		return rand() <= t_chance;
 	}
 
 	uint Random_Generator::get_seed() const

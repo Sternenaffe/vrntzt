@@ -56,12 +56,13 @@
 // IDEA: distance settings could be made variable with two-way distance
 //		 computation (only same species if both genotypes agree)
 //		 might not work cause own species is advantage
+// IDEA: can a PROPAGABLE_FRACTION gene work? probably but only species-wide
 
 // TODO: for Simple_Genotype find good container for sorted genome
 //       (small overhead, append with max O(log n), delete with
 //		 max O(log n) (could also be insertion with O(log n), fast looping
 //       possible, don't need to be directly indexable)
-// TODO: implement stagnation
+// TODO: create move constructor and assignment operator
 
 // IDEA: for feedforward: give every genome a min-distance-from-input
 //		 and a max-distance-from-input (intervall)
@@ -77,9 +78,18 @@
 namespace vrntzt::neat
 {
 	constexpr bool SIMPLISTIC_GENOTYPE_INIT_DEBUG = false;
-	constexpr bool SIMPLISTIC_GENOTYPE_MUTATION_DEBUG = true;
+	constexpr bool SIMPLISTIC_GENOTYPE_MUTATION_DEBUG = false;
 	constexpr bool SIMPLISTIC_GENOTYPE_MATING_DEBUG = false;
 	constexpr bool SIMPLISTIC_GENOTYPE_DISTANCE_DEBUG = false;
+
+	enum class Reproduction_Type
+	{
+		sexual_reproduction,
+		// mutation
+		asexual_reproduction,
+		// another type of sexual reproduction
+		interspecies_reproduction
+	};
 
 	struct Genome final
 	{
@@ -131,6 +141,9 @@ namespace vrntzt::neat
 		// chance: 1% = 1000 (1:100_000)
 		const int max_chance = 100 * 1000;
 
+		// determines how often sexual reproduction with individual which
+		// is not compatible will occur
+		const int interspecies_reproduction_chance = static_cast<int>(0.1 * 1000);
 		// determines how often sexual and asexual respectively
 		// reproduction will occur
 		const int sexual_reproduction_chance = 75 * 1000;
@@ -183,6 +196,9 @@ namespace vrntzt::neat
 
 		// distance to other genotype
 		float distance(const Simplistic_Genotype& t_other);
+
+		// decides which type of reproduction should be performed
+		Reproduction_Type get_reproduction_type();
 
 		// will create a new Simplistic_Genotype from two parents
 		// the fitter parent serves as template, all excess and disjoint

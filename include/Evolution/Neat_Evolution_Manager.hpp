@@ -39,7 +39,10 @@
 
 // TODO: create load & save class (in IO?)
 // TODO: delegate interspecies mating chance to Genotype
+// TODO: create more sophisticated algorithm to adjust compatibility threshold
 // TODO: improve debugging and monitoring (e.g. species info)
+// TODO: check if function args can be made const
+// TODO: modify get elite process
 
 #ifndef VRNTZT_NEAT_EVOLUTION_MANAGER_HPP
 #define VRNTZT_NEAT_EVOLUTION_MANAGER_HPP
@@ -50,12 +53,14 @@
 #include <lib/utility/include/trivial_typedefs.hpp>
 
 #include "src/vrntzt_concepts.hpp"
+#include "src/Helper/Species.hpp"
 
 namespace vrntzt::neat
 {
 	constexpr bool NEAT_EVOLUTION_MANAGER_DEBUG = true;
 	constexpr bool NEAT_EVOLUTION_MANAGER_SPECIATION_DEBUG = true;
 	constexpr bool NEAT_EVOLUTION_MANAGER_EVOLUTION_DEBUG = true;
+	constexpr bool NEAT_EVOLUTION_MANAGER_MATING_DEBUG = false;
 
 	struct Neat_Evolution_Settings
 	{
@@ -68,16 +73,12 @@ namespace vrntzt::neat
 	};
 
 	template <Genotype_Type Genotype>
-	using Genotype_Container = std::vector<std::unique_ptr<Genotype>>;
+	using Genotype_Container = std::vector<std::shared_ptr<Genotype>>;
 
 	// standard evolution manager
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
 	class Neat_Evolution_Manager
 	{
-		// determines how much of the population is allowed to reproduce
-		// decision is made based on fitness
-		const float PROPAGABLE_FRACTION = 0.4f;
-
 	public:
 		explicit Neat_Evolution_Manager(int t_input_num, int t_output_num,
 			Neat_Evolution_Settings& t_settings);
@@ -98,21 +99,48 @@ namespace vrntzt::neat
 		// void load_population(std::string t_file_path);
 
 	private:
+		// evaluate which species should be transfered to next generation, this
+		// is in order to track species over multiple generations
+		void _eliminate_weak_species();
+
 		// species with former champions will already exist if not first gen
 		void _speciate_population();
-		// produce specified number of species offspring - offspring
-		// will include current champion!
-		Genotype_Container<Genotype> _produce_species_offspring(
-			std::vector<Genotype*>& t_species, int t_offspring_num);
-		// reset population and species except for champions
-		void _reset_population();
-		// calculates square average of species
-		void _calculate_species_sq_avg_fitness();
-		// returns champions of every species
-		Genotype* _find_champion(std::vector<Genotype*>& t_genotypes);
+		
+		// delete species which didn't made progress
+		// for too long
+		// also remove empty species
+		void _eliminate_stagnating_species();
 
-		// removes weak individuals; dictated by PROPAGABLE_FRACTION
-		void _eliminate_weak_individuals(std::vector<Genotype*>& t_species);
+		// returns all species champions
+		Genotype_Container<Genotype> _get_champions();
+
+		// calculates how many offsprings should be contributed by given species
+		// always rounds down cause rounding doesnt ensures that all offspring
+		// sum == population size and if rounding down its at least never bigger
+		int  _calculate_offspring_num(int t_total_offspring_num,
+			Species<Genotype>& t_species);
+		
+		// produce specified number of species offspring
+		// adds offspring directly to population
+		void _produce_species_offspring(Species<Genotype>& t_species,
+			int t_offspring_num);
+
+		// mates given first parent with random individual from different species
+		// and returns this new offspring
+		std::shared_ptr<Genotype> _interspecies_reproduction(
+			std::shared_ptr<Genotype>& t_first_parent,
+			Species<Genotype>& t_first_parent_species);
+
+		// mates given first parent with random individual from same species
+		// and returns this new offspring
+		std::shared_ptr<Genotype> _sexual_reproduction(
+			std::shared_ptr<Genotype>& t_first_parent,
+			Species<Genotype>& t_first_parent_species);
+		
+		// mates given first parent with random individual from same species
+		// and returns this new offspring
+		std::shared_ptr<Genotype> _asexual_reproduction(
+			std::shared_ptr<Genotype>& t_first_parent);
 
 		// distance which needs to be exceeded to be in other species
 		// every distance at begin will be 6, cause there won't be 
@@ -121,26 +149,17 @@ namespace vrntzt::neat
 		float _compatibility_threshold = 6.1f;
 
 		// settings
-		int _input_num = 0;
-		int _output_num = 0;
+		uint _input_num = 0;
+		uint _output_num = 0;
 
-		int _population_size = 100;
-		int _species_count = 15;
+		uint _population_size = 100;
+		uint _species_count = 15;
 		float _interspecies_mating_chance = 0.001f;
 
 		Genotype_Container<Genotype> _population;
 		// specified population
-		std::vector<std::vector<Genotype*>> _species;
-		// number of species (and thereby champions) transfered from previous
-		// generation
-		int _num_old_species;
-		// square average fitness of species
-		// the fitness of the individuals when calculating this average
-		// is adjusted with respect to the number of genotypes in this
-		// species. this has the effect that bigger species need
-		// to perform better to grow than smaller ones
-		// more specific: average is not sum/n but sum/n^2
-		std::vector<float> _species_sq_avg_fitness;
+		std::vector<Species<Genotype>> _species;
+		
 		// average of all species square averages
 		float _total_species_fitness = 0.0f;
 	};

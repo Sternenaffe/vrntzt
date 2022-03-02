@@ -21,6 +21,7 @@
 #include <utility>
 #include <tuple>
 #include <random>
+#include <concepts>
 
 #include "../../IO/IO.hpp"
 #include "trivial_typedefs.hpp"
@@ -34,7 +35,14 @@ namespace u_lib
 	concept Indexable = requires(T t, int index)
 	{
 		t.size();
-		t.operator[](index);
+		t[index];
+	};
+
+	template <Indexable T>
+	struct Inner_Type
+	{
+		// type which is inside Indexable Ts
+		using type = decltype(std::declval<T>()[std::declval<size_t>()]);
 	};
 
 	class Random_Generator final
@@ -58,9 +66,13 @@ namespace u_lib
 		// get random float; t_min <= number <= t_max
 		float rand(float t_min, float t_max);
 
+		// returns true if chance has occured
+		// t_chance is a probability between 0 and 1
+		bool chance(float t_chance);
+
 		// get random item from random accessable container
-		template <Indexable T>
-		auto& random_item(T& t)
+		template <Indexable T, typename _Inner = Inner_Type<T>::type>
+		_Inner& random_item(T& t)
 		{
 			if (t.size() == 0)
 			{
@@ -70,18 +82,40 @@ namespace u_lib
 			return t[randint(t.size() - 1)];
 		}
 
+		// get random item from random accessable container which is different
+		// from passed t_item
+		template <Indexable T, typename _Inner = Inner_Type<T>::type>
+			requires std::equality_comparable<_Inner>
+		_Inner& different_random_item(T& t, _Inner& t_item)
+		{
+			if (t.size() < 2)
+			{
+				IO::error("can't pick two distinct random items from container"
+					"with less than two items\n");
+			}
+
+			// chose from every - 1 items (- 2 cause bounds are included)
+			size_t other_item_index = randint(t.size() - 2);
+			// check if items are same - if yes: choose not in range included item
+			if (t[other_item_index] == t_item)
+			{
+				other_item_index = t.size() - 1;
+			}
+
+			return t[other_item_index];
+		}
+
 		// get random item pair from random accessable container
 		// item1 != item2
-		template <Indexable T>
-		auto random_item_pair(T& t)
+		template <Indexable T, typename _Inner = Inner_Type<T>::type>
+		std::tuple<_Inner&, _Inner&> random_item_pair(T& t)
 		{
-			using std::declval;
 			using std::tuple;
-			using inner_type = decltype(declval<T>()[declval<size_t>()]);
 
-			if (t.size() <= 1)
+			if (t.size() < 2)
 			{
-				IO::error("can't pick random item pair from container with less than two elements\n");
+				IO::error("can't pick two distinct random items from container"
+					"with less than two items\n");
 			}
 
 			size_t index_1 = randint(t.size() - 1);
@@ -93,7 +127,7 @@ namespace u_lib
 				index_2 = t.size() - 1;
 			}
 
-			return tuple<inner_type&, inner_type&>(t[index_1], t[index_2]);
+			return tuple<_Inner&, _Inner&>(t[index_1], t[index_2]);
 		}
 
 		uint get_seed() const;
