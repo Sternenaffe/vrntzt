@@ -31,14 +31,15 @@ namespace u_lib
 	}
 
 	// get random int; 0 <= number <= t_max
-	int Random_Generator::randint(int t_max)
+	size_t Random_Generator::randint(size_t t_max)
 	{
 		if (t_max == 0)
 		{
 			return 0;
 		}
 
-		return _mt() % (t_max + 1);
+		int r = static_cast<int>(_mt());
+		return r % (t_max + 1);
 	}
 
 	// get random int; t_min <= number <= t_max
@@ -53,22 +54,24 @@ namespace u_lib
 			throw;
 		}
 
-		return (_mt() % (t_max - t_min + 1)) + t_min;
+		uint r = _mt();
+		int modulo_r = static_cast<int>(r % (t_max - t_min + 1));
+		return modulo_r + t_min;
 	}
+
+	// get random float; 0 <= number <= t_max
+	//long double Random_Generator::rand(long double t_max)
+	//{
+	//	long double r = static_cast<long double>(_mt());
+	//	long double divisor = _mt.max() / t_max;
+	//	return r / divisor;
+	//}
 
 	// get random float; 0 <= number <= 1
 	float Random_Generator::rand()
 	{
 		float r = static_cast<float>(_mt());
 		constexpr float divisor = static_cast<float>(std::mt19937::max());
-		return r / divisor;
-	}
-
-	// get random float; 0 <= number <= t_max
-	float Random_Generator::rand(float t_max)
-	{
-		float r = static_cast<float>(_mt());
-		float divisor = static_cast<float>(_mt.max() / t_max);
 		return r / divisor;
 	}
 

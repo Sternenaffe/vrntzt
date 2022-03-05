@@ -26,7 +26,7 @@
  * hidden: [fixed neuron number + 1; fixed neuron number + hidden neuron number]
  */
 
-// TODO: think about usage of ushort as network dimension
+// TODO: think about usage of size_t as network dimension
 // TODO: policy of connections (valid source & target)
 //		 should have internal sort/check
 // TODO: replace get/set input/output with internal classes & slicing
@@ -89,17 +89,17 @@ namespace vrntzt::neat
 		bool is_working() const;
 
 		// neuron number of inputs = input_index
-		const ushort input_num = 0;
+		const size_t input_num = 0;
 		// neuron number of outputs = output_index + _input_num
-		const ushort output_num = 0;
+		const size_t output_num = 0;
 		// always 1
-		const ushort bias_num = 1;
+		const size_t bias_num = 1;
 		// fixed neuron num = _output_num + _input_num + bias_num
 		// acts as offset for hidden neurons to give every neuron a
 		// unique number
-		const ushort fixed_neuron_num = 0;
+		const size_t fixed_neuron_num = 0;
 		// neuron number = neuron_num + _fixed_neuron_number
-		const ushort hidden_neuron_num = 0;
+		const size_t hidden_neuron_num = 0;
 
 	private:
 		// inits all members which have default values
@@ -108,7 +108,7 @@ namespace vrntzt::neat
 		// sigmoid
 		internal_type _activation_f(const internal_type t_value);
 
-		void _update_neuron_state(const ushort t_neuron);
+		void _update_neuron_state(const size_t t_neuron);
 
 		// index represents source neuron;
 		// _connections.size = input_num + hidden_neuron_num + bias_num
@@ -117,7 +117,7 @@ namespace vrntzt::neat
 		// includes inputs, outputs and bias
 		std::vector<internal_type> _neuron_states;
 		// offset of inputs in _neuron_states = output_num + bias_num
-		const ushort _output_offset = 0;
+		const size_t _output_offset = 0;
 
 		// flags
 		bool _working = false;

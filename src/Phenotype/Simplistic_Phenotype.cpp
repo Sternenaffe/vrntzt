@@ -5,6 +5,8 @@
 // NEAT source
 // Simplistic Phenome
 
+#include "include/vrntzt_pch.h"
+
 #include <vector>
 #include <sstream>
 #include <cmath>
@@ -18,7 +20,7 @@ namespace vrntzt::neat
 	using std::vector;
 	using internal_type = Simplistic_Phenotype::internal_type;
 
-	ushort Network_Dimensions::fixed_neuron_num() const
+	size_t Network_Dimensions::fixed_neuron_num() const
 	{
 		return input_num + output_num;
 	}
@@ -134,11 +136,11 @@ namespace vrntzt::neat
 		_working = true;
 
 		// can be cyclic -> specified number of iterations
-		for (int i = 0; i < t_iterations; ++i)
+		for (size_t i = 0; i < t_iterations; ++i)
 		{
 			// iterate over all neurons except inputs and bias which
 			// won't change state
-			for (int current_neuron = _output_offset;
+			for (size_t current_neuron = _output_offset;
 				current_neuron < fixed_neuron_num + hidden_neuron_num;
 				++current_neuron)
 			{
@@ -163,7 +165,7 @@ namespace vrntzt::neat
 		return _working;
 	}
 
-	void Simplistic_Phenotype::_update_neuron_state(const ushort t_neuron)
+	void Simplistic_Phenotype::_update_neuron_state(const size_t t_neuron)
 	{
 		// connections vector only contains hidden_neurons and outputs
 		size_t connections_index = t_neuron - _output_offset;
@@ -177,7 +179,7 @@ namespace vrntzt::neat
 		_neuron_states[t_neuron] = 0;
 
 		// iterate over all connections and add to neuron state
-		for (Connection connection : conn_to_neuron)
+		for (const Connection& connection : conn_to_neuron)
 		{
 			// temp variable for debugging
 			internal_type temp_add = 0;

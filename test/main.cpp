@@ -1,5 +1,6 @@
 // test file
 
+// TODO: consider use of std::optional
 // TODO: replace similar variable names in the whole project
 // TODO: exclude second bound when getting random integers from Random_Generator
 
@@ -11,6 +12,7 @@
 
 #include "lib/IO/IO.hpp"
 
+#include "include/vrntzt_global.hpp"
 #include "include/Evolution/Neat_Evolution_Manager.hpp"
 #include "include/Decoding/Decoder.hpp"
 #include "include/Decoding/Simplistic_Decoder.hpp"
@@ -70,7 +72,6 @@ int main()
 	//}
 	//eval_xor(&test_genotype);
 	//return 0;
-	
 
 	Neat_Evolution_Settings ev_settings;
 	ev_settings.population_size = 100;
@@ -84,6 +85,7 @@ int main()
 		// get fitness
 		for (auto& genotype : ev_manager.get_population())
 		{
+			// bottleneck - i guess sorting in decoding
 			genotype->set_fitness(eval_xor(genotype.get()));
 		}
 

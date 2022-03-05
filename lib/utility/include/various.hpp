@@ -14,6 +14,8 @@
   */
 
 // TODO: create .tpp file
+// TODO: overload Random_Generator methods and add bound checking - maybe with templates
+//		 for return type?
 
 #ifndef U_LIB_VARIOUS_HPP
 #define U_LIB_VARIOUS_HPP
@@ -54,7 +56,7 @@ namespace u_lib
 		explicit Random_Generator(uint t_seed);
 
 		// get random int; 0 <= number <= t_max
-		int randint(int t_max);
+		size_t randint(size_t t_max);
 		// get random int; t_min <= number <= t_max
 		int randint(int t_min, int t_max);
 
@@ -62,9 +64,12 @@ namespace u_lib
 		// get random int; 0 <= number <= 1
 		float rand();
 		// get random float; 0 <= number <= t_max
+		// long double rand(long double t_max);
 		float rand(float t_max);
 		// get random float; t_min <= number <= t_max
+		// long double rand(long double t_min, long double t_max);
 		float rand(float t_min, float t_max);
+
 
 		// returns true if chance has occured
 		// t_chance is a probability between 0 and 1

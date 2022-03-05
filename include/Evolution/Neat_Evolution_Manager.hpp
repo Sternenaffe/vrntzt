@@ -17,6 +17,7 @@
 // SPLIT: Evolution Manager - Habitate - Genotype Container (Population) - 
 //		  species
 
+// URGENT: create definition for move constructor & move assignment operator
 // URGENT: either make population the managed ressource or a vector of
 //		   pointers - species and champions pointer are VERY dangerous
 //		   when pointed object might be copied!
@@ -37,6 +38,7 @@
 //			  an validity check - should create an
 //			  evolution manager and some kind of habitate-class
 
+// TODO: check and rethink types
 // TODO: create load & save class (in IO?)
 // TODO: delegate interspecies mating chance to Genotype
 // TODO: create more sophisticated algorithm to adjust compatibility threshold
@@ -62,6 +64,7 @@ namespace vrntzt::neat
 	constexpr bool NEAT_EVOLUTION_MANAGER_EVOLUTION_DEBUG = true;
 	constexpr bool NEAT_EVOLUTION_MANAGER_MATING_DEBUG = false;
 
+	// if add constructor: need to write wrapper for c_dll!
 	struct Neat_Evolution_Settings
 	{
 	public:
@@ -85,7 +88,11 @@ namespace vrntzt::neat
 		virtual ~Neat_Evolution_Manager();
 
 		Neat_Evolution_Manager(Neat_Evolution_Manager&) = delete;
+		Neat_Evolution_Manager(Neat_Evolution_Manager&&) = default;
 		Neat_Evolution_Manager& operator=(Neat_Evolution_Manager&) = delete;
+		Neat_Evolution_Manager& operator=(Neat_Evolution_Manager&&) = default;
+
+		size_t get_population_size();
 
 		Genotype_Container<Genotype>& get_population();
 
@@ -117,13 +124,13 @@ namespace vrntzt::neat
 		// calculates how many offsprings should be contributed by given species
 		// always rounds down cause rounding doesnt ensures that all offspring
 		// sum == population size and if rounding down its at least never bigger
-		int  _calculate_offspring_num(int t_total_offspring_num,
+		size_t  _calculate_offspring_num(size_t t_total_offspring_num,
 			Species<Genotype>& t_species);
 		
 		// produce specified number of species offspring
 		// adds offspring directly to population
 		void _produce_species_offspring(Species<Genotype>& t_species,
-			int t_offspring_num);
+			size_t t_offspring_num);
 
 		// mates given first parent with random individual from different species
 		// and returns this new offspring
@@ -152,8 +159,8 @@ namespace vrntzt::neat
 		uint _input_num = 0;
 		uint _output_num = 0;
 
-		uint _population_size = 100;
-		uint _species_count = 15;
+		size_t _population_size = 100;
+		size_t _species_count = 15;
 		float _interspecies_mating_chance = 0.001f;
 
 		Genotype_Container<Genotype> _population;

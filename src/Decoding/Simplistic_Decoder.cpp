@@ -5,6 +5,7 @@
 // neat
 // decoder extension header
 
+#include "include/vrntzt_pch.h"
 #include "include/Decoding/Simplistic_Decoder.hpp"
 
 #include <vector>
@@ -33,7 +34,7 @@ namespace vrntzt::neat::decoding
 	{
 		// should not contain inputs and bias
 		vector<vector<Connection>> temp_vec;
-		ushort max_neuron_num = 0;
+		size_t max_neuron_num = 0;
 
 		for (const Genome& genome : t_genotype.get_genome_list())
 		{
@@ -49,14 +50,16 @@ namespace vrntzt::neat::decoding
 			max_neuron_num = std::max(max_neuron_num, genome.connection.source_neuron);
 			max_neuron_num = std::max(max_neuron_num, genome.connection.target_neuron);
 
+			// needed! index might be randomly bigger than current vec
 			if (max_neuron_num >= temp_vec.size())
 			{
-				temp_vec.resize(max_neuron_num + 1);
+				size_t index = max_neuron_num + 1;
+				temp_vec.resize(index);
 			}
 
 			// calculate pos in connection vector
 			// vector stores connections to hidden neurons and outputs
-			ushort index = genome.connection.target_neuron -
+			size_t index = genome.connection.target_neuron -
 				t_genotype.input_num - t_genotype.bias_num;
 
 			temp_vec[index].push_back(genome.connection);
@@ -77,7 +80,7 @@ namespace vrntzt::neat::decoding
 		Network_Dimensions dim;
 		dim.input_num = t_genotype.input_num;
 		dim.output_num = t_genotype.output_num;
-		dim.hidden_neuron_num = std::max(0u,
+		dim.hidden_neuron_num = std::max(static_cast<size_t>(0),
 			sorted_connections.size() - t_genotype.output_num);
 
 		return Simplistic_Phenotype(dim, sorted_connections);

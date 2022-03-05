@@ -28,6 +28,7 @@
 // SPLIT: Genome - Genotype - Genome Container
 
 // IMPORTANT: implement copy constructor and assignment operator
+// IMPORTANT: change function of weight mutation (not chance for every individual conn)
 // IMPORTANT: find out if genome should mutate after crossover
 // IMPORTANT: move weight altering from Genome to Connection (?)
 // IMPORTANT: add check if fitness was set
@@ -107,9 +108,9 @@ namespace vrntzt::neat
 
 	public:
 		// create Genome with random weighted connection
-		explicit Genome(ushort t_source_neuron, ushort t_target_neuron);
+		explicit Genome(size_t t_source_neuron, size_t t_target_neuron);
 		// create Genome with pre-defined connetion weight
-		explicit Genome(ushort t_source_neuron, ushort t_target_neuron,
+		explicit Genome(size_t t_source_neuron, size_t t_target_neuron,
 			float t_weight);
 
 		Genome(const Genome& t_other);
@@ -157,7 +158,7 @@ namespace vrntzt::neat
 		// probability that connection will get completely new weight
 		const int randomize_weight_chance = 10 * 1000;
 
-		const int add_neuron_chance = 3 * 1000;
+		const int add_neuron_chance = 50 * 1000;
 		const int add_connection_chance = 5 * 1000;
 
 	public:
@@ -165,10 +166,10 @@ namespace vrntzt::neat
 		struct Const_Genome_Iterator;
 
 		// creates Genotype with ONE random connection
-		explicit Simplistic_Genotype(const ushort t_input_num,
-			const ushort t_output_num);
-		explicit Simplistic_Genotype(const ushort t_input_num,
-			const ushort t_output_num, std::vector<Genome> t_genomes);
+		explicit Simplistic_Genotype(const size_t t_input_num,
+			const size_t t_output_num);
+		explicit Simplistic_Genotype(const size_t t_input_num,
+			const size_t t_output_num, std::vector<Genome> t_genomes);
 		virtual ~Simplistic_Genotype();
 
 		Simplistic_Genotype(const Simplistic_Genotype& t_other);
@@ -180,11 +181,11 @@ namespace vrntzt::neat
 		explicit operator Generic_Genome();
 
 		// neuron number of inputs = input_index
-		const ushort input_num = 0;
+		const size_t input_num = 0;
 		// neuron number of outputs = output_index + _input_num
-		const ushort output_num = 0;
-		const ushort bias_num = 1;
-		const ushort fixed_neuron_num;
+		const size_t output_num = 0;
+		const size_t bias_num = 1;
+		const size_t fixed_neuron_num;
 
 		std::string get_genomes_string() const;
 
@@ -215,13 +216,13 @@ namespace vrntzt::neat
 		// returns true if should perform sexual reproduction
 		bool perform_sexual_reproduction() const;
 
-		ushort get_neuron_num() const;
-		ushort get_hidden_neuron_num() const;
+		size_t get_neuron_num() const;
+		size_t get_hidden_neuron_num() const;
 		// returns read-only Genome list
 		const std::vector<Genome>& get_genome_list() const;
 		// returns list of connected hidden neurons - needed for matching of 
 		// genotype neuron num to phenotype neuron num
-		const std::vector<ushort>& get_hidden_neurons() const;
+		const std::vector<size_t>& get_hidden_neurons() const;
 
 	private:
 		float _fitness = 0.0f;
@@ -229,13 +230,13 @@ namespace vrntzt::neat
 		std::vector<Genome> _genomes;
 		// holds every hidden neuron which is included in network
 		// not sorted
-		std::vector<ushort> _connected_hidden_neurons;
+		std::vector<size_t> _connected_hidden_neurons;
 
 		// total global neuron num
-		static ushort _global_neuron_num;
+		static size_t _global_neuron_num;
 
 		// register neuron - checks if already in _connected_hidden_neurons
-		void _register_neuron(ushort t_neuron);
+		void _register_neuron(size_t t_neuron);
 
 		// ######### mating & mutation ##################
 		Simplistic_Genotype _mate(const Simplistic_Genotype& t_other,

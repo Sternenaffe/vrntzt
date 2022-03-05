@@ -17,6 +17,7 @@
 #ifndef VRNTZT_NEAT_EVOLUTION_MANAGER_TPP
 #define VRNTZT_NEAT_EVOLUTION_MANAGER_TPP
 
+#include "include/vrntzt_pch.h"
 #include "include/Evolution/Neat_Evolution_Manager.hpp"
 
 #include <vector>
@@ -62,6 +63,12 @@ namespace vrntzt::neat
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
 	Neat_Evolution_Manager<Genotype, Phenotype>::~Neat_Evolution_Manager()
 	{
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	size_t Neat_Evolution_Manager<Genotype, Phenotype>::get_population_size()
+	{
+		return _population_size;
 	}
 
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
@@ -128,18 +135,18 @@ namespace vrntzt::neat
 			species.eliminate_weak_individuals();
 		}
 		
-		int total_offspring_num = _population_size - elite.size();
+		size_t total_offspring_num = _population_size - elite.size();
 
 		// mating
 		for (Species<Genotype>& species : _species)
 		{
-			int offspring_num = _calculate_offspring_num(total_offspring_num,
+			size_t offspring_num = _calculate_offspring_num(total_offspring_num,
 				species);
 			// adds offspring directly to population
 			_produce_species_offspring(species, offspring_num);
 		}
 
-		uint missing_individuals = total_offspring_num - _population.size();
+		size_t missing_individuals = total_offspring_num - _population.size();
 
 		if constexpr (NEAT_EVOLUTION_MANAGER_MATING_DEBUG)
 		{
@@ -291,8 +298,8 @@ namespace vrntzt::neat
 	}
 
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
-	int Neat_Evolution_Manager<Genotype, Phenotype>::_calculate_offspring_num(
-		int t_total_offspring_num, Species<Genotype>& t_species)
+	size_t Neat_Evolution_Manager<Genotype, Phenotype>::_calculate_offspring_num(
+		size_t t_total_offspring_num, Species<Genotype>& t_species)
 	{
 		// normal calculation - depends on species fitness share in total fitness
 		if (_total_species_fitness > 0)
@@ -336,7 +343,7 @@ namespace vrntzt::neat
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
 	void Neat_Evolution_Manager<Genotype, Phenotype>::
 		_produce_species_offspring(Species<Genotype>& t_species,
-			int t_offspring_num)
+			size_t t_offspring_num)
 	{
 		// mutation, intra- and interspecies mating
 		for (int i = 0; i < t_offspring_num; ++i)

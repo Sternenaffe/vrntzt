@@ -5,6 +5,8 @@
 // NEAT source
 // Simplistic Genome
 
+#include "include/vrntzt_pch.h"
+
 #include <vector>
 #include <random>
 #include <string>
@@ -26,7 +28,7 @@ namespace vrntzt::neat
 
 	uint Genome::_global_innovation_num = 0;
 
-	Genome::Genome(ushort t_source_neuron, ushort t_target_neuron)
+	Genome::Genome(size_t t_source_neuron, size_t t_target_neuron)
 		:
 		innovation_num(++_global_innovation_num),
 		connection(Connection(
@@ -38,7 +40,7 @@ namespace vrntzt::neat
 		
 	}
 
-	Genome::Genome(ushort t_source_neuron, ushort t_target_neuron,
+	Genome::Genome(size_t t_source_neuron, size_t t_target_neuron,
 		float t_weight)
 		:
 		innovation_num(++_global_innovation_num),
@@ -102,10 +104,10 @@ namespace vrntzt::neat
 		}
 	}
 
-	ushort Simplistic_Genotype::_global_neuron_num = 0;
+	size_t Simplistic_Genotype::_global_neuron_num = 0;
 
-	Simplistic_Genotype::Simplistic_Genotype(const ushort t_input_num,
-		const ushort t_output_num)
+	Simplistic_Genotype::Simplistic_Genotype(const size_t t_input_num,
+		const size_t t_output_num)
 		:
 		input_num(t_input_num),
 		output_num(t_output_num),
@@ -123,8 +125,8 @@ namespace vrntzt::neat
 		_mutate_new_conn();
 	}
 
-	Simplistic_Genotype::Simplistic_Genotype(const ushort t_input_num,
-		const ushort t_output_num, vector<Genome> t_genomes)
+	Simplistic_Genotype::Simplistic_Genotype(const size_t t_input_num,
+		const size_t t_output_num, vector<Genome> t_genomes)
 		:
 		input_num(t_input_num),
 		output_num(t_output_num),
@@ -281,7 +283,7 @@ namespace vrntzt::neat
 			avg_weight_diff /= num_matching_genomes;
 		}
 		// normalize number of excess and disjoint genomes
-		int total_genome_num = std::max(_genomes.size(),
+		size_t total_genome_num = std::max(_genomes.size(),
 			t_other._genomes.size());
 		float portion_disjoint_genomes = 1.0f * num_disjoint_genomes / 
 			total_genome_num;
@@ -347,7 +349,7 @@ namespace vrntzt::neat
 	}
 
 	// add neuron to internal list of connected neurons
-	void Simplistic_Genotype::_register_neuron(ushort t_neuron)
+	void Simplistic_Genotype::_register_neuron(size_t t_neuron)
 	{
 		// increase _global_neuron_num if unknown; equivalent to adding 
 		// new neuron
@@ -371,7 +373,7 @@ namespace vrntzt::neat
 		}
 	}
 
-	const std::vector<ushort>& Simplistic_Genotype::get_hidden_neurons() const
+	const std::vector<size_t>& Simplistic_Genotype::get_hidden_neurons() const
 	{
 		return _connected_hidden_neurons;
 	}
@@ -540,13 +542,13 @@ namespace vrntzt::neat
 		return new_genotype;
 	}
 
-	ushort Simplistic_Genotype::get_neuron_num() const
+	size_t Simplistic_Genotype::get_neuron_num() const
 	{
-		return static_cast<ushort>(fixed_neuron_num +
+		return static_cast<size_t>(fixed_neuron_num +
 			_connected_hidden_neurons.size());
 	}
 
-	ushort Simplistic_Genotype::get_hidden_neuron_num() const
+	size_t Simplistic_Genotype::get_hidden_neuron_num() const
 	{
 		return get_neuron_num() - input_num - output_num - bias_num;
 	}
@@ -580,29 +582,30 @@ namespace vrntzt::neat
 	{
 		// source neuron: could be every connected neuron except outputs
 		// numbers < input number represent index of input neuron
-		ushort source_neuron = 0;
+		size_t source_neuron = 0;
 		// -1 cause bounds are included
-		ushort r_num = r_gen.randint(bias_num + input_num +
+		size_t r_num = r_gen.randint(bias_num + input_num +
 			_connected_hidden_neurons.size() - 1);
 		// source is input neuron
 		if (r_num < input_num + bias_num)
 		{
 			source_neuron = r_num;
 		}
-		// source is hidden neuron
+		// source is hidden neuron - pick from list of hidden neurons
 		else
 		{
-			source_neuron = _connected_hidden_neurons[r_num - input_num - bias_num];
+			size_t index = r_num - input_num - bias_num;
+			source_neuron = _connected_hidden_neurons[index];
 		}
 
 		// target neuron: could be every connected neuron except
 		// input & bias
-		ushort target_neuron = 0;
+		size_t target_neuron = 0;
 		// create number between (input_num + bias_num) and
 		// total neuron num
 		// -1 cause bounds are included
-		r_num = r_gen.randint(input_num + bias_num,
-			fixed_neuron_num + _connected_hidden_neurons.size() - 1);
+		r_num = r_gen.randint(static_cast<int>(input_num + bias_num),
+			static_cast<int>(fixed_neuron_num + _connected_hidden_neurons.size() - 1));
 		// target is output
 		if (r_num < fixed_neuron_num)
 		{
@@ -636,14 +639,14 @@ namespace vrntzt::neat
 		}
 
 		// pick random genome
-		size_t t_genome_index = r_gen.randint(_genomes.size() - 1);
+		size_t t_genome_index = r_gen.randint(static_cast<int>(_genomes.size() - 1));
 
 		// split connection into 2 + neuron
 		Connection chosen_connection = _genomes[t_genome_index].connection;
 		_genomes.erase(_genomes.begin() + t_genome_index);
 
 		// add neuron
-		ushort new_neuron = _global_neuron_num;
+		size_t new_neuron = _global_neuron_num;
 		_register_neuron(new_neuron);
 
 		if constexpr (SIMPLISTIC_GENOTYPE_MUTATION_DEBUG)

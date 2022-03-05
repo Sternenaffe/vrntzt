@@ -13,6 +13,8 @@
   *
   */
 
+#include "include/vrntzt_pch.h"
+
 #include "include/vrntzt_global.hpp"
 
 namespace vrntzt

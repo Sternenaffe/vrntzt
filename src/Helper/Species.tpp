@@ -116,7 +116,7 @@ namespace vrntzt::neat
 		else
 		{
 			IO::error("index outside bounds\n");
-			//return nullptr;
+			throw;
 		}
 		
 	}
@@ -178,8 +178,10 @@ namespace vrntzt::neat
 
 		// remove first '(1 - PROPAGABLE_FRACTION) * total' genotypes
 		// which have lowest fitness
-		size_t remove_num = static_cast<int>((1 - PROPAGABLE_FRACTION) *
-			_individuals.size());
+		double non_propagable_faction = static_cast<double>(
+			1.0 - PROPAGABLE_FRACTION);
+		size_t remove_num = static_cast<int>(
+			non_propagable_faction *_individuals.size());
 		_individuals.erase(_individuals.begin(),
 			_individuals.begin() + remove_num);
 	}

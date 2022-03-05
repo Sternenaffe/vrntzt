@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{f6b81a3a-442e-48ae-895e-96405624c635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{42371be6-2be6-442f-8676-efdefc20636a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{a7aec205-a55c-4b73-ac37-0757e7f0b83a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Evolution">
+      <UniqueIdentifier>{4594b4f1-45a3-4a0a-b77c-6f7844058a37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Genotype">
+      <UniqueIdentifier>{7afa76ba-4e09-4d15-9613-0d16a576cea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Phenotype">
+      <UniqueIdentifier>{1c32de44-5c3d-4711-8669-a7a3774747a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Genotype">
+      <UniqueIdentifier>{6cdabf7a-33ec-43ca-a3f1-5e1a24e4bdfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Phenotype">
+      <UniqueIdentifier>{58136b0a-7684-479f-b3e1-3c91b0aca75e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Evolution">
+      <UniqueIdentifier>{f284eb45-71b3-430e-b314-097ce989d19a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\c_dll">
+      <UniqueIdentifier>{e6681995-ad23-4470-a5ac-477ac96c3a82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\c_dll">
+      <UniqueIdentifier>{b94604f4-72f6-45a0-964a-29458ddd608f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Helper">
+      <UniqueIdentifier>{84559580-7053-44c8-aece-d88cee396194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Decoding">
+      <UniqueIdentifier>{aad13cb6-6696-4fad-8522-ef5cd2b30bc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Decoding">
+      <UniqueIdentifier>{f90dcecd-ab1f-4b69-bc9f-3ee35969f32d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Helper">
+      <UniqueIdentifier>{35058190-1bc7-4608-9dbf-fe00927de997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\IO">
+      <UniqueIdentifier>{f1144210-ae14-4034-a073-a1abb6164b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\utility">
+      <UniqueIdentifier>{be58fc1c-aab2-4a0f-a053-baff2e04524a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\utility\include">
+      <UniqueIdentifier>{486731aa-ad64-4f41-8640-5abc85abf4fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\utility\src">
+      <UniqueIdentifier>{5de117c9-23a3-4000-83fe-e0245ef2a002}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Evolution\Neat_Evolution_Manager.hpp">
+      <Filter>include\Evolution</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Genotype\Simplistic_Genotype.hpp">
+      <Filter>include\Genotype</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Phenotype\Simplistic_Phenotype.hpp">
+      <Filter>include\Phenotype</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vrntzt_pch.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vrntzt_global.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\c_dll\vrntzt_neat.h">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="include\c_dll\framework.h">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="include\c_dll\neat_evolution_wrapper.h">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Decoding\Decoder.hpp">
+      <Filter>include\Decoding</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Decoding\Simplistic_Decoder.hpp">
+      <Filter>include\Decoding</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Genotype\IGenotype.hpp">
+      <Filter>include\Genotype</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Genotype\Simple_Genotype.hpp">
+      <Filter>include\Genotype</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Phenotype\IPhenotype.hpp">
+      <Filter>include\Phenotype</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Phenotype\Simple_Phenotype.hpp">
+      <Filter>include\Phenotype</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Helper\simple_helper.hpp">
+      <Filter>src\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Helper\Species.hpp">
+      <Filter>src\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IO\IO.hpp">
+      <Filter>lib\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\utility\include\fixed_vector.hpp">
+      <Filter>lib\utility\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\utility\include\has_member.hpp">
+      <Filter>lib\utility\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\utility\include\interface.hpp">
+      <Filter>lib\utility\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\utility\include\trivial_typedefs.hpp">
+      <Filter>lib\utility\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\utility\include\various.hpp">
+      <Filter>lib\utility\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\c_dll\simplistic_genotype_wrapper.h">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="include\c_dll\internal_alias.hpp">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="include\c_dll\wrapping_helper.hpp">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Genotype\Simplistic_Genotype.cpp">
+      <Filter>src\Genotype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Phenotype\Simplistic_Phenotype.cpp">
+      <Filter>src\Phenotype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vrntzt_pch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vrntzt_global.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c_dll\dllmain.cpp">
+      <Filter>src\c_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c_dll\neat_evolution_wrapper.cpp">
+      <Filter>src\c_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Decoding\Simplistic_Decoder.cpp">
+      <Filter>src\Decoding</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Genotype\Simple_Genotype.cpp">
+      <Filter>src\Genotype</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Helper\simple_helper.cpp">
+      <Filter>src\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Phenotype\Simple_Phenotype.cpp">
+      <Filter>src\Phenotype</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IO\IO.cpp">
+      <Filter>lib\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\utility\src\fixed_vector.cpp">
+      <Filter>lib\utility\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\utility\src\various.cpp">
+      <Filter>lib\utility\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c_dll\simplistic_genotype_wrapper.cpp">
+      <Filter>src\c_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c_dll\wrapping_helper.cpp">
+      <Filter>src\c_dll</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Evolution\Neat_Evolution_Manager.tpp">
+      <Filter>src\Evolution</Filter>
+    </None>
+    <None Include="src\Decoding\Decoder.tpp">
+      <Filter>src\Decoding</Filter>
+    </None>
+    <None Include="src\Helper\Species.tpp">
+      <Filter>src\Helper</Filter>
+    </None>
+    <None Include="lib\utility\src\has_member.tpp">
+      <Filter>lib\utility\src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

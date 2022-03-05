@@ -5,12 +5,13 @@
 // neat
 // helper source for simple/simplistic
 
+#include "include/vrntzt_pch.h"
 #include "src/Helper/simple_helper.hpp"
 
 namespace vrntzt::neat
 {
-	Connection::Connection(const ushort t_source_neuron,
-		const ushort t_target_neuron,
+	Connection::Connection(const size_t t_source_neuron,
+		const size_t t_target_neuron,
 		float t_weight)
 		:
 		source_neuron(t_source_neuron),

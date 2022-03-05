@@ -25,33 +25,33 @@ namespace vrntzt::neat
 	struct Network_Dimensions
 	{
 	public:
-		ushort input_num = 0;
-		ushort output_num = 0;
-		ushort hidden_neuron_num = 0;
+		size_t input_num = 0;
+		size_t output_num = 0;
+		size_t hidden_neuron_num = 0;
 
 		// returns input_num + output_num
-		ushort fixed_neuron_num() const;
+		size_t fixed_neuron_num() const;
 	};
 
 	struct Connection
 	{
 	public:
-		Connection(const ushort t_source_neuron,
-			const ushort t_target_neuron,
+		Connection(const size_t t_source_neuron,
+			const size_t t_target_neuron,
 			float t_weight);
 		// creates connection with random weight
-		Connection(const ushort t_source_neuron,
-			const ushort t_target_neuron) = delete;
+		Connection(const size_t t_source_neuron,
+			const size_t t_target_neuron) = delete;
 
 		Connection(const Connection& t_other);
 		//Connection& operator=(Connection t_other) = delete;
 
 		// members are not const because of assignment operator!
 		// includes input and output neurons
-		ushort source_neuron = 0;
+		size_t source_neuron = 0;
 		// target is not really needed in this context cause corresponds
 		// to vector index
-		ushort target_neuron = 0;
+		size_t target_neuron = 0;
 		float weight = 0.0;
 	};
 }
