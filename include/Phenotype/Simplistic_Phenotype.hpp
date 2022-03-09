@@ -26,6 +26,8 @@
  * hidden: [fixed neuron number + 1; fixed neuron number + hidden neuron number]
  */
 
+// URGENT: implement move copy constructor
+
 // TODO: think about usage of size_t as network dimension
 // TODO: policy of connections (valid source & target)
 //		 should have internal sort/check
@@ -70,17 +72,18 @@ namespace vrntzt::neat
 		explicit Simplistic_Phenotype(const Generic_Genome& genome);
 
 		Simplistic_Phenotype(const Simplistic_Phenotype&) = delete;
+		Simplistic_Phenotype(Simplistic_Phenotype&&) noexcept = default;
 		Simplistic_Phenotype& operator=(Simplistic_Phenotype) = delete;
 
 		virtual ~Simplistic_Phenotype();
 
 		// methods to get/set inputs & outputs
-		void set_input(const int t_index, const internal_type t_value);
-		internal_type get_input(const int t_index) const;
-		internal_type get_output(const int t_index) const;
+		void set_input(const size_t t_index, const internal_type t_value);
+		internal_type get_input(const size_t t_index) const;
+		internal_type get_output(const size_t t_index) const;
 
 		// core function: will process inputs and store solution in output
-		void activate(int t_iterations);
+		void activate(uint t_iterations);
 
 		void reset();
 

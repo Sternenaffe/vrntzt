@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\c_dll\internal_alias.hpp" />
     <ClInclude Include="include\c_dll\simplistic_genotype_wrapper.h" />
+    <ClInclude Include="include\c_dll\simplistic_phenotype_wrapper.h" />
     <ClInclude Include="include\c_dll\vrntzt_neat.h" />
     <ClInclude Include="include\c_dll\framework.h" />
     <ClInclude Include="include\c_dll\neat_evolution_wrapper.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="src\c_dll\dllmain.cpp" />
     <ClCompile Include="src\c_dll\neat_evolution_wrapper.cpp" />
     <ClCompile Include="src\c_dll\simplistic_genotype_wrapper.cpp" />
+    <ClCompile Include="src\c_dll\simplistic_phenotype_wrapper.cpp" />
     <ClCompile Include="src\c_dll\wrapping_helper.cpp" />
     <ClCompile Include="src\Decoding\Simplistic_Decoder.cpp" />
     <ClCompile Include="src\Genotype\Simple_Genotype.cpp" />

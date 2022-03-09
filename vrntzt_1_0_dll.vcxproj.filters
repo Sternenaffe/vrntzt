@@ -135,6 +135,9 @@
     <ClInclude Include="include\c_dll\wrapping_helper.hpp">
       <Filter>include\c_dll</Filter>
     </ClInclude>
+    <ClInclude Include="include\c_dll\simplistic_phenotype_wrapper.h">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Genotype\Simplistic_Genotype.cpp">
@@ -180,6 +183,9 @@
       <Filter>src\c_dll</Filter>
     </ClCompile>
     <ClCompile Include="src\c_dll\wrapping_helper.cpp">
+      <Filter>src\c_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c_dll\simplistic_phenotype_wrapper.cpp">
       <Filter>src\c_dll</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,4 @@
-// ch 2021
+// ch 2021-22
 // c
 // v1.0.0
 // vrntzt
@@ -17,8 +17,9 @@
 
 namespace vrntzt::neat::c_dll
 {
-	VRNTZT_NEAT_C_DLL_API Neat_Evolution_Manager_Wrapper new_neat_evolution_manager(
-		uint t_inputs, uint t_outputs, Neat_Evolution_Settings_Wrapper t_settings)
+	Neat_Evolution_Manager_Wrapper new_neat_evolution_manager(
+		const uint t_inputs, const uint t_outputs,
+		const Neat_Evolution_Settings_Wrapper t_settings)
 	{
 		// create evolution manager
 		Internal_Neat_Evolution_Settings settings = _convert_ev_settings(
@@ -30,38 +31,40 @@ namespace vrntzt::neat::c_dll
 		return _wrap_ev_manager(new_manager);
 	}
 
-	VRNTZT_NEAT_C_DLL_API void delete_neat_evolution_manager(
-		Neat_Evolution_Manager_Wrapper t_wrapped_manager)
+	void delete_neat_evolution_manager(
+		Neat_Evolution_Manager_Wrapper* t_wrapper)
 	{
-		delete _unwrap_ev_manager(t_wrapped_manager);
+		delete _unwrap_ev_manager(*t_wrapper);
+		t_wrapper->handler = nullptr;
 	}
 
 	// simple forward
-	VRNTZT_NEAT_C_DLL_API void create_random_population(Neat_Evolution_Manager_Wrapper t_wrapped_manager)
+	void create_random_population(const Neat_Evolution_Manager_Wrapper t_wrapper)
 	{
 		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
-			t_wrapped_manager);
+			t_wrapper);
 		manager->create_random_population();
 	}
 
 	// simple forward
-	VRNTZT_NEAT_C_DLL_API void evolve_population(Neat_Evolution_Manager_Wrapper t_wrapped_manager)
+	void evolve_population(Neat_Evolution_Manager_Wrapper t_wrapper)
 	{
 		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
-			t_wrapped_manager);
+			t_wrapper);
 		manager->evolve_population();
 	}
 
-	VRNTZT_NEAT_C_DLL_API void get_population(Neat_Evolution_Manager_Wrapper t_wrapped_manager,
+	void get_population(Neat_Evolution_Manager_Wrapper t_wrapper,
 		Simplistic_Genotype_Wrapper* t_target, size_t t_target_size)
 	{
 		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
-			t_wrapped_manager);
+			t_wrapper);
 
 		if (t_target_size != manager->get_population_size())
 		{
 			// array has wrong size
 			// throw;
+			std::cout << "wrong array size!\n";
 		}
 		else
 		{
@@ -71,7 +74,9 @@ namespace vrntzt::neat::c_dll
 			{
 				// wrap population and store in target array
 				// population contains smart pointers
-				t_target[i] = _wrap_simplistic_genotype(population[i].get());
+				Internal_Simplistic_Genotype* genotype_ptr =
+					population[i].get();
+				t_target[i] = _wrap_simplistic_genotype(genotype_ptr);
 			}
 		}
 	}

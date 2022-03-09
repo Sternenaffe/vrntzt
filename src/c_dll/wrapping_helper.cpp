@@ -39,7 +39,7 @@ namespace vrntzt::neat::c_dll
 	}
 
 	Internal_Simplistic_Neat_Evolution_Manager* _unwrap_ev_manager(
-		Neat_Evolution_Manager_Wrapper t_wrapper)
+		const Neat_Evolution_Manager_Wrapper& t_wrapper)
 	{
 		return static_cast<Internal_Simplistic_Neat_Evolution_Manager*>(t_wrapper.handler);
 	}
@@ -54,8 +54,23 @@ namespace vrntzt::neat::c_dll
 	}
 
 	Internal_Simplistic_Genotype* _unwrap_simplistic_genotype(
-		Simplistic_Genotype_Wrapper t_wrapper)
+		const Simplistic_Genotype_Wrapper& t_wrapper)
 	{
 		return static_cast<Internal_Simplistic_Genotype*>(t_wrapper.handler);;
+	}
+
+	Simplistic_Phenotype_Wrapper _wrap_simplistic_phenotype(
+		Internal_Simplistic_Phenotype* t_phenotype)
+	{
+		// wrap simplistic genotype
+		Simplistic_Phenotype_Wrapper wrapped_phenotype(
+			static_cast<void*>(t_phenotype));
+		return wrapped_phenotype;
+	}
+
+	Internal_Simplistic_Phenotype* _unwrap_simplistic_phenotype(
+		const Simplistic_Phenotype_Wrapper& t_wrapper)
+	{
+		return static_cast<Internal_Simplistic_Phenotype*>(t_wrapper.handler);;
 	}
 }

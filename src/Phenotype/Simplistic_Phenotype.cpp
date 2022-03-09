@@ -89,7 +89,7 @@ namespace vrntzt::neat
 		return 1 / (1 + exp(-4.9f * t_value));
 	}
 
-	void Simplistic_Phenotype::set_input(const int t_index,
+	void Simplistic_Phenotype::set_input(const size_t t_index,
 		const internal_type t_value)
 	{
 		if (t_index < input_num && t_index >= 0)
@@ -102,12 +102,12 @@ namespace vrntzt::neat
 		}
 	}
 
-	internal_type Simplistic_Phenotype::get_input(const int t_index) const
+	internal_type Simplistic_Phenotype::get_input(const size_t t_index) const
 	{
 		return _neuron_states[t_index + bias_num];
 	}
 
-	internal_type Simplistic_Phenotype::get_output(const int t_index) const
+	internal_type Simplistic_Phenotype::get_output(const size_t t_index) const
 	{
 		if (t_index < output_num && t_index >= 0)
 		{
@@ -120,7 +120,7 @@ namespace vrntzt::neat
 		}
 	}
 
-	void Simplistic_Phenotype::activate(int t_iterations)
+	void Simplistic_Phenotype::activate(uint t_iterations)
 	{
 		if constexpr (SIMPLISTIC_PHENOTYPE_DEBUG)
 		{
