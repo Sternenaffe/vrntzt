@@ -18,15 +18,7 @@
 //		  species
 
 // URGENT: create definition for move constructor & move assignment operator
-// URGENT: either make population the managed ressource or a vector of
-//		   pointers - species and champions pointer are VERY dangerous
-//		   when pointed object might be copied!
 
-// IMPORTANT: add mechanic to _reset_population to remove stagnant species
-// IMPORTANT: check if population size is constant
-// IMPORTANT: species won't change as long as stagnant species mechanic isn't
-//			  implemented cause champions and their according species are
-//			  transfered in every new generation
 // IMPORTANT: reconsider usage of shared_ptr for genotype container
 //			  most important is reference to a specific individual - both internal
 //			  (e.g. via species or champion) and external (when getting population
@@ -39,12 +31,12 @@
 //			  evolution manager and some kind of habitate-class
 
 // TODO: check and rethink types
-// TODO: create load & save class (in IO?)
+// TODO: rewrite save & load (SRT and HR_Serializable interface)
 // TODO: delegate interspecies mating chance to Genotype
 // TODO: create more sophisticated algorithm to adjust compatibility threshold
 // TODO: improve debugging and monitoring (e.g. species info)
 // TODO: check if function args can be made const
-// TODO: modify get elite process
+// TODO: store in xml file
 
 #ifndef VRNTZT_NEAT_EVOLUTION_MANAGER_HPP
 #define VRNTZT_NEAT_EVOLUTION_MANAGER_HPP
@@ -52,7 +44,8 @@
 #include <string>
 #include <vector>
 
-#include <lib/utility/include/trivial_typedefs.hpp>
+#include "lib/pugixml-1.12/src/pugixml.hpp"
+#include "lib/utility/include/trivial_typedefs.hpp"
 
 #include "src/vrntzt_concepts.hpp"
 #include "src/Helper/Species.hpp"
@@ -60,8 +53,8 @@
 namespace vrntzt::neat
 {
 	constexpr bool NEAT_EVOLUTION_MANAGER_DEBUG = true;
-	constexpr bool NEAT_EVOLUTION_MANAGER_SPECIATION_DEBUG = true;
-	constexpr bool NEAT_EVOLUTION_MANAGER_EVOLUTION_DEBUG = true;
+	constexpr bool NEAT_EVOLUTION_MANAGER_SPECIATION_DEBUG = false;
+	constexpr bool NEAT_EVOLUTION_MANAGER_EVOLUTION_DEBUG = false;
 	constexpr bool NEAT_EVOLUTION_MANAGER_MATING_DEBUG = false;
 
 	// if add constructor: need to write wrapper for c_dll!
@@ -71,7 +64,7 @@ namespace vrntzt::neat
 		int population_size = 100;
 		// will split population in batches for processing
 		// int batch_size = 100;
-		int species_count = 15;
+		int species_count = 10;
 		float interspecies_mating_chance = 0.001f;
 	};
 
@@ -82,6 +75,9 @@ namespace vrntzt::neat
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
 	class Neat_Evolution_Manager
 	{
+	private:
+		class XML_Handler;
+
 	public:
 		explicit Neat_Evolution_Manager(int t_input_num, int t_output_num,
 			Neat_Evolution_Settings& t_settings);
@@ -95,17 +91,25 @@ namespace vrntzt::neat
 		size_t get_population_size();
 
 		Genotype_Container<Genotype>& get_population();
+		// returns best genotype from previous generation
+		const std::shared_ptr<Genotype> get_previous_best_genotype();
 
 		void create_random_population();
+		void delete_population();
 
 		void evolve_population();
 
 		// load and save
-		// file path can be both relative and absolute
-		// void save_population(std::string t_file_path);
-		// void load_population(std::string t_file_path);
+		void save(std::string t_file_path);
+		void load(std::string t_file_path);
+
+		// xml load and save
+		void save_population_to_xml(pugi::xml_node t_xml_node);
+		void load_population_from_xml(pugi::xml_node t_xml_node);
 
 	private:
+		void _add_genotype_to_population(const Genotype& t_genotype);
+
 		// evaluate which species should be transfered to next generation, this
 		// is in order to track species over multiple generations
 		void _eliminate_weak_species();
@@ -144,8 +148,7 @@ namespace vrntzt::neat
 			std::shared_ptr<Genotype>& t_first_parent,
 			Species<Genotype>& t_first_parent_species);
 		
-		// mates given first parent with random individual from same species
-		// and returns this new offspring
+		// mutates given genotype and returns copy
 		std::shared_ptr<Genotype> _asexual_reproduction(
 			std::shared_ptr<Genotype>& t_first_parent);
 
@@ -153,7 +156,7 @@ namespace vrntzt::neat
 		// every distance at begin will be 6, cause there won't be 
 		// matching genomes (AT THE MOMENT! WILL CHANGE WHEN DOUBLE
 		// MUTATIONS GET SAME INNOVATION NUMBER!)
-		float _compatibility_threshold = 6.1f;
+		float _compatibility_threshold = 5.5f;
 
 		// settings
 		uint _input_num = 0;
@@ -166,6 +169,8 @@ namespace vrntzt::neat
 		Genotype_Container<Genotype> _population;
 		// specified population
 		std::vector<Species<Genotype>> _species;
+
+		std::shared_ptr<Genotype> _prev_best_genotype;
 		
 		// average of all species square averages
 		float _total_species_fitness = 0.0f;

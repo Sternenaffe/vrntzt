@@ -1,4 +1,4 @@
-// ch 2021
+// ch 2021-22
 // c++20
 // v1.0.0
 // vrntzt
@@ -28,10 +28,10 @@
 // SPLIT: Genome - Genotype - Genome Container
 
 // IMPORTANT: implement copy constructor and assignment operator
-// IMPORTANT: change function of weight mutation (not chance for every individual conn)
-// IMPORTANT: find out if genome should mutate after crossover
-// IMPORTANT: move weight altering from Genome to Connection (?)
+// IMPORTANT: change loading to static factory-like method without other params than node
+// IMPORTANT: move weight altering from Genome to Connection
 // IMPORTANT: add check if fitness was set
+// IMPORTANT: add check for loaded attributes
 
 // TODO: split class & responsibilities
 // TODO: change chances from int to floats
@@ -71,6 +71,8 @@
 #ifndef SIMPLISTIC_GENOTYPE_HPP
 #define SIMPLISTIC_GENOTYPE_HPP
 
+#include "lib/pugixml-1.12/src/pugixml.hpp"
+
 #include "include/Genotype/IGenotype.hpp"
 #include "include/Generic_Genome.hpp"
 
@@ -104,6 +106,9 @@ namespace vrntzt::neat
 		const float perturb_weight_max = 2;
 
 	private:
+		// constructor for loading
+		explicit Genome();
+
 		static uint _global_innovation_num;
 
 	public:
@@ -116,7 +121,10 @@ namespace vrntzt::neat
 		Genome(const Genome& t_other);
 		Genome& operator=(Genome t_other);
 
-		// friend void swap(Genome& t_first, Genome& t_second);
+		// loading constructors
+		static Genome load_from_xml(pugi::xml_node t_xml_node);
+		// save
+		void save_to_xml(pugi::xml_node t_xml_node);
 
 		// mutates connection weight
 		void mutate_weight();
@@ -140,26 +148,26 @@ namespace vrntzt::neat
 		const float distance_weight_relevance = 1.0f;
 
 		// chance: 1% = 1000 (1:100_000)
-		const int max_chance = 100 * 1000;
+		const uint max_chance = 100 * 1000;
 
 		// determines how often sexual reproduction with individual which
 		// is not compatible will occur
-		const int interspecies_reproduction_chance = static_cast<int>(0.1 * 1000);
+		const uint interspecies_reproduction_chance = static_cast<uint>(0.1 * 1000);
 		// determines how often sexual and asexual respectively
 		// reproduction will occur
-		const int sexual_reproduction_chance = 75 * 1000;
+		const uint sexual_reproduction_chance = 75 * 1000;
 
 		// chance that excess/disjoint genomes are picked when
 		// parent fitness is same
-		const int no_match_genome_chance = 50 * 1000;
+		const uint no_match_genome_chance = 50 * 1000;
 		
-		const int weight_mutation_chance = 75 * 1000;
-		const int weight_perturb_chance = 90 * 1000;
+		const uint weight_mutation_chance = 70 * 1000;
+		const uint weight_perturb_chance = 90 * 1000;
 		// probability that connection will get completely new weight
-		const int randomize_weight_chance = 10 * 1000;
+		const uint randomize_weight_chance = 10 * 1000;
 
-		const int add_neuron_chance = 50 * 1000;
-		const int add_connection_chance = 5 * 1000;
+		const uint add_neuron_chance = 3 * 1000;
+		const uint add_connection_chance = 5 * 1000;
 
 	public:
 		// forward dec
@@ -174,6 +182,10 @@ namespace vrntzt::neat
 
 		Simplistic_Genotype(const Simplistic_Genotype& t_other);
 		Simplistic_Genotype& operator=(Simplistic_Genotype t_other);
+
+		// xml load and save
+		void save_to_xml(pugi::xml_node t_xml_node);
+		void load_from_xml(pugi::xml_node t_xml_node);
 
 		friend void swap(Simplistic_Genotype& t_first,
 			Simplistic_Genotype& t_second);
@@ -234,6 +246,8 @@ namespace vrntzt::neat
 
 		// total global neuron num
 		static size_t _global_neuron_num;
+
+		void _delete_genomes();
 
 		// register neuron - checks if already in _connected_hidden_neurons
 		void _register_neuron(size_t t_neuron);

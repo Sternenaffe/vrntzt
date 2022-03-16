@@ -1,0 +1,97 @@
+﻿<Project>
+    
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>obj\vrntzt_csharp_api\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+	
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+		
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>vrntzt.neat.csharp_api</RootNamespace>
+    <OutputPath>bin\vrntzt_csharp_api\$(Configuration)</OutputPath>
+	<IntermediateOutputPath>obj\vrntzt_csharp_api\$(Configuration)</IntermediateOutputPath>
+	<ApplicationIcon />
+	<OutputType>Exe</OutputType>
+	<StartupObject />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Debug\**" />
+    <Compile Remove="doc\**" />
+    <Compile Remove="include\c_dll\**" />
+    <Compile Remove="include\Decoding\**" />
+    <Compile Remove="include\Evolution\**" />
+    <Compile Remove="include\Genotype\**" />
+    <Compile Remove="include\Phenotype\**" />
+    <Compile Remove="lib\**" />
+    <Compile Remove="obj\**" />
+    <Compile Remove="Release\**" />
+    <Compile Remove="src\c_dll\**" />
+    <Compile Remove="src\Decoding\**" />
+    <Compile Remove="src\Evolution\**" />
+    <Compile Remove="src\Genotype\**" />
+    <Compile Remove="src\Helper\**" />
+    <Compile Remove="src\Phenotype\**" />
+    <EmbeddedResource Remove="Debug\**" />
+    <EmbeddedResource Remove="doc\**" />
+    <EmbeddedResource Remove="include\c_dll\**" />
+    <EmbeddedResource Remove="include\Decoding\**" />
+    <EmbeddedResource Remove="include\Evolution\**" />
+    <EmbeddedResource Remove="include\Genotype\**" />
+    <EmbeddedResource Remove="include\Phenotype\**" />
+    <EmbeddedResource Remove="lib\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="Release\**" />
+    <EmbeddedResource Remove="src\c_dll\**" />
+    <EmbeddedResource Remove="src\Decoding\**" />
+    <EmbeddedResource Remove="src\Evolution\**" />
+    <EmbeddedResource Remove="src\Genotype\**" />
+    <EmbeddedResource Remove="src\Helper\**" />
+    <EmbeddedResource Remove="src\Phenotype\**" />
+    <None Remove="Debug\**" />
+    <None Remove="doc\**" />
+    <None Remove="include\c_dll\**" />
+    <None Remove="include\Decoding\**" />
+    <None Remove="include\Evolution\**" />
+    <None Remove="include\Genotype\**" />
+    <None Remove="include\Phenotype\**" />
+    <None Remove="lib\**" />
+    <None Remove="obj\**" />
+    <None Remove="Release\**" />
+    <None Remove="src\c_dll\**" />
+    <None Remove="src\Decoding\**" />
+    <None Remove="src\Evolution\**" />
+    <None Remove="src\Genotype\**" />
+    <None Remove="src\Helper\**" />
+    <None Remove="src\Phenotype\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="include\Generic_Genome.hpp" />
+    <None Remove="include\vrntzt_global.hpp" />
+    <None Remove="include\vrntzt_pch.h" />
+    <None Remove="src\vrntzt_concepts.hpp" />
+    <None Remove="src\vrntzt_global.cpp" />
+    <None Remove="src\vrntzt_pch.cpp" />
+    <None Remove="test\main.cpp" />
+    <None Remove="vrntzt_1_0.vcxproj.filters" />
+    <None Remove="vrntzt_1_0_dll.vcxproj.filters" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="test\" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+</Project>

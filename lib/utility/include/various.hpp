@@ -13,6 +13,8 @@
   * 
   */
 
+// TODO: move Random_Generator to own file
+// TODO: integrate u_lib::IO
 // TODO: create .tpp file
 // TODO: overload Random_Generator methods and add bound checking - maybe with templates
 //		 for return type?
@@ -20,12 +22,12 @@
 #ifndef U_LIB_VARIOUS_HPP
 #define U_LIB_VARIOUS_HPP
 
+#include <iostream>
 #include <utility>
 #include <tuple>
 #include <random>
 #include <concepts>
 
-#include "../../IO/IO.hpp"
 #include "trivial_typedefs.hpp"
 
 namespace u_lib
@@ -81,7 +83,8 @@ namespace u_lib
 		{
 			if (t.size() == 0)
 			{
-				IO::error("can't pick random item from empty container\n");
+				std::cout << "can't pick random item from empty container\n";
+				throw;
 			}
 
 			return t[randint(t.size() - 1)];
@@ -95,8 +98,9 @@ namespace u_lib
 		{
 			if (t.size() < 2)
 			{
-				IO::error("can't pick two distinct random items from container"
-					"with less than two items\n");
+				std::cout << "can't pick two distinct random items from container"
+					"with less than two items\n";
+				throw;
 			}
 
 			// chose from every - 1 items (- 2 cause bounds are included)
@@ -119,8 +123,9 @@ namespace u_lib
 
 			if (t.size() < 2)
 			{
-				IO::error("can't pick two distinct random items from container"
-					"with less than two items\n");
+				std::cout << "can't pick two distinct random items from container"
+					"with less than two items\n";
+				throw;
 			}
 
 			size_t index_1 = randint(t.size() - 1);

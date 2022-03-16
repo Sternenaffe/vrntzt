@@ -5,6 +5,8 @@
 // NEAT source
 // Simple Genome
 
+#include "lib/pugixml-1.12/src/pugixml.hpp"
+
 #include "include/vrntzt_pch.h"
 #include "include/Genotype/Simple_Genotype.hpp"
 

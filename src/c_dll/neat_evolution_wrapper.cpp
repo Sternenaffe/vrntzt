@@ -38,6 +38,22 @@ namespace vrntzt::neat::c_dll
 		t_wrapper->handler = nullptr;
 	}
 
+	void save(const Neat_Evolution_Manager_Wrapper t_wrapper,
+		const std::string t_file)
+	{
+		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
+			t_wrapper);
+		//manager->save(t_file);
+	}
+
+	void load(const Neat_Evolution_Manager_Wrapper t_wrapper,
+		const std::string t_file)
+	{
+		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
+			t_wrapper);
+		//manager->load(t_file);
+	}
+
 	// simple forward
 	void create_random_population(const Neat_Evolution_Manager_Wrapper t_wrapper)
 	{
@@ -47,15 +63,15 @@ namespace vrntzt::neat::c_dll
 	}
 
 	// simple forward
-	void evolve_population(Neat_Evolution_Manager_Wrapper t_wrapper)
+	void evolve_population(const Neat_Evolution_Manager_Wrapper t_wrapper)
 	{
 		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
 			t_wrapper);
 		manager->evolve_population();
 	}
 
-	void get_population(Neat_Evolution_Manager_Wrapper t_wrapper,
-		Simplistic_Genotype_Wrapper* t_target, size_t t_target_size)
+	void get_population(const Neat_Evolution_Manager_Wrapper t_wrapper,
+		Simplistic_Genotype_Wrapper t_target[], const size_t t_target_size)
 	{
 		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
 			t_wrapper);
@@ -79,5 +95,19 @@ namespace vrntzt::neat::c_dll
 				t_target[i] = _wrap_simplistic_genotype(genotype_ptr);
 			}
 		}
+	}
+
+	Simplistic_Genotype get_previous_best_genotype(
+		const Neat_Evolution_Manager t_wrapper)
+	{
+		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
+			t_wrapper);
+		
+		const std::shared_ptr<Internal_Simplistic_Genotype>& best_genotype =
+			manager->get_previous_best_genotype();
+		// handler needs to have non-const pointer
+		Internal_Simplistic_Genotype* best_genotype_ptr =
+			const_cast<Internal_Simplistic_Genotype*>(best_genotype.get());
+		return _wrap_simplistic_genotype(best_genotype_ptr);
 	}
 }

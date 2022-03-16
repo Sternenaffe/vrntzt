@@ -28,6 +28,8 @@
 
 #include "include/c_dll/simplistic_genotype_wrapper.h"
 
+#include <string>
+
 namespace vrntzt::neat::c_dll
 {
 	typedef unsigned int uint;
@@ -59,6 +61,14 @@ namespace vrntzt::neat::c_dll
 	void delete_neat_evolution_manager(Neat_Evolution_Manager* t_wrapper);
 
 	extern "C" VRNTZT_NEAT_C_DLL_API
+	void save(const Neat_Evolution_Manager t_wrapper,
+		const std::string t_file);
+
+	extern "C" VRNTZT_NEAT_C_DLL_API
+	void load(const Neat_Evolution_Manager t_wrapper,
+		const std::string t_file);
+
+	extern "C" VRNTZT_NEAT_C_DLL_API
 	void create_random_population(const Neat_Evolution_Manager t_wrapper);
 
 	extern "C" VRNTZT_NEAT_C_DLL_API
@@ -68,6 +78,10 @@ namespace vrntzt::neat::c_dll
 	extern "C" VRNTZT_NEAT_C_DLL_API
 	void get_population(const Neat_Evolution_Manager t_wrapper,
 		Simplistic_Genotype t_target[], const size_t t_target_size);
+
+	extern "C" VRNTZT_NEAT_C_DLL_API
+	Simplistic_Genotype get_previous_best_genotype(
+		const Neat_Evolution_Manager t_wrapper);
 }
 
 #endif // !VRNTZT_NEAT_C_DLL_EVOLUTION_WRAPPER_H

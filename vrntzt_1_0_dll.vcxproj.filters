@@ -58,6 +58,12 @@
     <Filter Include="lib\utility\src">
       <UniqueIdentifier>{5de117c9-23a3-4000-83fe-e0245ef2a002}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\pugixml-1.12">
+      <UniqueIdentifier>{42c2771b-7adf-44d2-98b2-94d89339bae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\pugixml-1.12\src">
+      <UniqueIdentifier>{37a202ff-99b3-49b9-b695-b58419b7b6f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Evolution\Neat_Evolution_Manager.hpp">
@@ -138,6 +144,12 @@
     <ClInclude Include="include\c_dll\simplistic_phenotype_wrapper.h">
       <Filter>include\c_dll</Filter>
     </ClInclude>
+    <ClInclude Include="include\c_dll\IO_wrapper.h">
+      <Filter>include\c_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pugixml-1.12\src\pugixml.hpp">
+      <Filter>lib\pugixml-1.12\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Genotype\Simplistic_Genotype.cpp">
@@ -187,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="src\c_dll\simplistic_phenotype_wrapper.cpp">
       <Filter>src\c_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="src\c_dll\IO_wrapper.cpp">
+      <Filter>src\c_dll</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\pugixml-1.12\src\pugixml.cpp">
+      <Filter>lib\pugixml-1.12\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -27,7 +27,8 @@
 // #include <cmath>
 
 #include "lib/IO/IO.hpp"
-#include <lib/utility/include/trivial_typedefs.hpp>
+#include "lib/utility/include/trivial_typedefs.hpp"
+#include "lib/pugixml-1.12/src/pugixml.hpp"
 
 #include "include/vrntzt_global.hpp"
 #include "include/Genotype/Simplistic_Genotype.hpp"
@@ -78,6 +79,13 @@ namespace vrntzt::neat
 		return _population;
 	}
 
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	const std::shared_ptr<Genotype> Neat_Evolution_Manager<Genotype, Phenotype>::
+		get_previous_best_genotype()
+	{
+		return _prev_best_genotype;
+	}
+
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
 	void Neat_Evolution_Manager<Genotype, Phenotype>::
 		create_random_population()
@@ -86,6 +94,8 @@ namespace vrntzt::neat
 		{
 			IO::debug("creating random population\n");
 		}
+
+		_population.clear();
 		
 		for (uint i = 0; i < _population_size; ++i)
 		{
@@ -93,6 +103,18 @@ namespace vrntzt::neat
 				_input_num, _output_num);
 			_population.push_back(std::move(tmp));
 		}
+
+		// set best genotype to avoid nullptr
+		_prev_best_genotype = *_population.begin();
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::delete_population()
+	{
+		_population.clear();
+		_species.clear();
+
+		_compatibility_threshold = 5.5f;
 	}
 
 	// function is not written in the most efficient way - could merge multiple
@@ -106,9 +128,29 @@ namespace vrntzt::neat
 				"\n");
 		}
 
+		// fitness comparison lambda
+		auto comp_fitness = [](const std::shared_ptr<Genotype>& t_first,
+			const std::shared_ptr<Genotype>& t_second) -> bool
+		{
+			// return true if second has larger fitness
+			return (t_first->get_fitness() < t_second->get_fitness()) ? true : false;
+		};
+
+		// find best genotype of old generation
+		_prev_best_genotype = *std::max_element(_population.begin(), _population.end(),
+			comp_fitness);
+
+		// cleanup old gen
+		// ---------------------------- SPLIT -------------------------------
+		// propagable species
+
 		// evaluate which species should be transfered to next generation, this
 		// is in order to track species over multiple generations
 		_eliminate_weak_species();
+
+		// returns elite genotypes which should be inherited unmodified
+		Genotype_Container<Genotype> elite = _get_champions();
+
 		_speciate_population();
 
 		// calculate species fitness
@@ -120,8 +162,10 @@ namespace vrntzt::neat
 		// remove species if their fitness is stagnating (obviously only
 		// possible if not a new species)
 		_eliminate_stagnating_species();
-		// returns elite genotypes which should be inherited unmodified
-		Genotype_Container<Genotype> elite = _get_champions();
+
+		// propagable species
+		// ---------------------------- SPLIT -------------------------------
+		// propagable individuals
 
 		_population.clear();
 
@@ -135,6 +179,10 @@ namespace vrntzt::neat
 			species.eliminate_weak_individuals();
 		}
 		
+		// propagable individuals
+		// ------------------------- SPLIT ---------------------------
+		// creating offspring
+
 		size_t total_offspring_num = _population_size - elite.size();
 
 		// mating
@@ -144,6 +192,11 @@ namespace vrntzt::neat
 				species);
 			// adds offspring directly to population
 			_produce_species_offspring(species, offspring_num);
+		}
+
+		if (total_offspring_num < _population.size())
+		{
+			IO::error("Fatal Error: population bigger than offspring num\n");
 		}
 
 		size_t missing_individuals = total_offspring_num - _population.size();
@@ -179,17 +232,92 @@ namespace vrntzt::neat
 		if (_species.size() < _species_count)
 		{
 			float random_num = r_gen.rand(0.95f, 0.99f);
-			IO::debug("random num: " + std::to_string(random_num) + "\n");
+			// IO::debug("random num: " + std::to_string(random_num) + "\n");
 			_compatibility_threshold *= random_num;
 		}
 		else if (_species.size() > _species_count)
 		{
 			float random_num = r_gen.rand(1.01f, 1.05f);
-			IO::debug("random num: " + std::to_string(random_num) + "\n");
+			// IO::debug("random num: " + std::to_string(random_num) + "\n");
 			_compatibility_threshold *= random_num;
 		}
 
+		// change through multiplication: should never get 0 but to make sure:
+		_compatibility_threshold = std::max(_compatibility_threshold, 0.1f);
+
 		return;
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::save(std::string t_file_path)
+	{
+		pugi::xml_document doc;
+		// append base node
+		pugi::xml_node base_node = doc.append_child("Neat_Evolution_Manager");
+
+		save_population_to_xml(base_node);
+
+		doc.save_file(t_file_path.c_str());
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::load(std::string t_file_path)
+	{
+		pugi::xml_document doc;
+		doc.load_file(t_file_path.c_str());
+
+		pugi::xml_node neat_evolution_manager_node = doc.document_element();
+		if (std::strcmp(neat_evolution_manager_node.name(), "Neat_Evolution_Manager"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+
+		delete_population();
+
+		// append population node
+		pugi::xml_node population_node = neat_evolution_manager_node.first_child();
+		load_population_from_xml(population_node);
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::save_population_to_xml(
+		pugi::xml_node t_xml_node)
+	{
+		// append population node
+		pugi::xml_node population_node = t_xml_node.append_child("Population");
+
+		// add genotypes
+		for (auto& genotype : _population)
+		{
+			genotype->save_to_xml(population_node);
+		}
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::load_population_from_xml(
+		pugi::xml_node t_population_node)
+	{
+		if (std::strcmp(t_population_node.name(), "Population"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+
+		// load genotypes
+		for (pugi::xml_node genotype_node = t_population_node.first_child();
+			genotype_node; genotype_node = genotype_node.next_sibling())
+		{
+			Genotype genotype(_input_num, _output_num);
+			genotype.load_from_xml(genotype_node);
+			_add_genotype_to_population(std::move(genotype));
+		}
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::_add_genotype_to_population(
+		const Genotype& t_genotype)
+	{
+		std::shared_ptr<Genotype> genotype_ptr = std::make_shared<Genotype>(t_genotype);
+		_population.push_back(genotype_ptr);
 	}
 
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
@@ -346,7 +474,7 @@ namespace vrntzt::neat
 			size_t t_offspring_num)
 	{
 		// mutation, intra- and interspecies mating
-		for (int i = 0; i < t_offspring_num; ++i)
+		for (uint i = 0; i < t_offspring_num; ++i)
 		{
 			std::shared_ptr<Genotype>& first_parent =
 				t_species.get_random_individual();
@@ -388,7 +516,9 @@ namespace vrntzt::neat
 
 		Genotype new_offspring = Genotype::create_offspring(
 			*t_first_parent, *second_parent);
-		return std::make_shared<Genotype>(std::move(new_offspring));
+		// additional mutate
+		Genotype mutated_new_offspring = new_offspring.mutate();
+		return std::make_shared<Genotype>(std::move(mutated_new_offspring));
 	}
 
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
@@ -401,7 +531,9 @@ namespace vrntzt::neat
 
 		Genotype new_offspring = Genotype::create_offspring(
 			*t_first_parent, *second_parent);
-		return std::make_shared<Genotype>(std::move(new_offspring));
+		// additional mutate
+		Genotype mutated_new_offspring = new_offspring.mutate();
+		return std::make_shared<Genotype>(std::move(mutated_new_offspring));
 	}
 
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>

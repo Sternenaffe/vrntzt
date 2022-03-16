@@ -86,7 +86,16 @@ namespace vrntzt::neat
 	internal_type Simplistic_Phenotype::_activation_f(const internal_type t_value)
 	{
 		// values taken from stanley.ec02.pdf (MIT paper)
-		return 1 / (1 + exp(-4.9f * t_value));
+		// return 1 / (1 + exp(-4.9f * t_value));
+		
+		// fast sigmoid function
+		// matches MIT paper sigmoid close enough, but faster
+		internal_type offset = 1;
+		internal_type vertical_scale = 0.5f;
+		internal_type horizontal_scale = 4;
+
+		internal_type scaled_value = t_value * horizontal_scale;
+		return vertical_scale * (scaled_value / (1 + abs(scaled_value)) + offset);
 	}
 
 	void Simplistic_Phenotype::set_input(const size_t t_index,

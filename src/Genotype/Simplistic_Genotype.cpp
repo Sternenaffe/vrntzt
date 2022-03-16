@@ -28,6 +28,13 @@ namespace vrntzt::neat
 
 	uint Genome::_global_innovation_num = 0;
 
+	Genome::Genome()
+		:
+		connection(Connection(0, 0, 0))
+	{
+
+	}
+
 	Genome::Genome(size_t t_source_neuron, size_t t_target_neuron)
 		:
 		innovation_num(++_global_innovation_num),
@@ -104,6 +111,62 @@ namespace vrntzt::neat
 		}
 	}
 
+	Genome Genome::load_from_xml(pugi::xml_node t_xml_node)
+	{
+		Genome tmp_genome;
+
+		if (std::strcmp(t_xml_node.name(), "Genome"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+
+		pugi::xml_attribute innovation_attr = t_xml_node.first_attribute();
+		if (std::strcmp(innovation_attr.name(), "Innovation_Number"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+		tmp_genome.innovation_num = innovation_attr.as_uint();
+		_global_innovation_num = std::max(tmp_genome.innovation_num,
+			_global_innovation_num);
+
+		pugi::xml_attribute source_neuron_attr = innovation_attr.next_attribute();
+		if (std::strcmp(source_neuron_attr.name(), "Source_Neuron"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+		tmp_genome.connection.source_neuron = source_neuron_attr.as_uint();
+
+		pugi::xml_attribute target_neuron_attr = source_neuron_attr.next_attribute();
+		if (std::strcmp(target_neuron_attr.name(), "Target_Neuron"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+		tmp_genome.connection.target_neuron = target_neuron_attr.as_uint();
+
+		pugi::xml_attribute weight_attr = target_neuron_attr.next_attribute();
+		if (std::strcmp(weight_attr.name(), "Weight"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+		tmp_genome.connection.weight = weight_attr.as_float();
+
+		return tmp_genome;
+	}
+
+	void Genome::save_to_xml(pugi::xml_node t_xml_node)
+	{
+		// append genome node
+		pugi::xml_node genotype_node = t_xml_node.append_child("Genome");
+		genotype_node.append_attribute("Innovation_Number").set_value(
+			innovation_num);
+		genotype_node.append_attribute("Source_Neuron").set_value(
+			connection.source_neuron);
+		genotype_node.append_attribute("Target_Neuron").set_value(
+			connection.target_neuron);
+		genotype_node.append_attribute("Weight").set_value(
+			connection.weight);
+	}
+
 	size_t Simplistic_Genotype::_global_neuron_num = 0;
 
 	Simplistic_Genotype::Simplistic_Genotype(const size_t t_input_num,
@@ -174,6 +237,11 @@ namespace vrntzt::neat
 	Simplistic_Genotype::operator Generic_Genome()
 	{
 		return Generic_Genome();
+	}
+
+	void Simplistic_Genotype::_delete_genomes()
+	{
+		_genomes.clear();
 	}
 
 	std::string Simplistic_Genotype::get_genomes_string() const
@@ -506,22 +574,38 @@ namespace vrntzt::neat
 
 	bool Simplistic_Genotype::_chance_add_genome() const
 	{
-		int chance = r_gen.randint(1, max_chance);
+		uint chance = r_gen.randint(1, max_chance);
 		return no_match_genome_chance >= chance;
 	}
 
 	Simplistic_Genotype Simplistic_Genotype::mutate()
 	{
-		Simplistic_Genotype new_genotype(*this);
-		int chance = 0;
+		// if set to true: only one weight mutation occures per generation
+		constexpr bool single_weight_mutation = true;
 
-		// mutate genome weights
-		for (auto& genome : new_genotype._genomes)
+		Simplistic_Genotype new_genotype(*this);
+		uint chance = 0;
+
+		if constexpr (!single_weight_mutation)
+		{
+			// mutate genome weights
+			for (auto& genome : new_genotype._genomes)
+			{
+				chance = r_gen.randint(1, max_chance);
+				if (weight_mutation_chance >= chance)
+				{
+					new_genotype._mutate_weight(genome);
+				}
+			}
+		}
+		else
 		{
 			chance = r_gen.randint(1, max_chance);
 			if (weight_mutation_chance >= chance)
 			{
-				new_genotype._mutate_weight(genome);
+				// pick random genome & mutate weight
+				Genome& r_genome = r_gen.random_item(new_genotype._genomes);
+				new_genotype._mutate_weight(r_genome);
 			}
 		}
 
@@ -566,7 +650,7 @@ namespace vrntzt::neat
 	// REFACTOR!!!
 	void Simplistic_Genotype::_mutate_weight(Genome& t_genome)
 	{
-		int chance = r_gen.randint(1, max_chance);
+		uint chance = r_gen.randint(1, max_chance);
 
 		if (randomize_weight_chance >= chance)
 		{
@@ -682,6 +766,40 @@ namespace vrntzt::neat
 		swap(t_first._genomes, t_second._genomes);
 		swap(t_first._connected_hidden_neurons,
 			t_second._connected_hidden_neurons);
+	}
+
+	void Simplistic_Genotype::save_to_xml(pugi::xml_node t_xml_node)
+	{
+		// append genotype node
+		pugi::xml_node genotype_node = t_xml_node.append_child("Simplistic_Genotype");
+
+		// add genomes
+		for (auto& genome : _genomes)
+		{
+			genome.save_to_xml(genotype_node);
+		}
+	}
+
+	void Simplistic_Genotype::load_from_xml(pugi::xml_node t_genotype_node)
+	{
+		if (std::strcmp(t_genotype_node.name(), "Simplistic_Genotype"))
+		{
+			IO::error("loading file is not valid\n");
+		}
+
+		_delete_genomes();
+
+		// load genomes
+		for (pugi::xml_node genome_node = t_genotype_node.first_child();
+			genome_node; genome_node = genome_node.next_sibling())
+		{
+			Genome tmp_genome = tmp_genome.load_from_xml(genome_node);
+			// find biggest used neuron number
+			_global_neuron_num = std::max({ tmp_genome.connection.source_neuron,
+				tmp_genome.connection.target_neuron, _global_neuron_num });
+
+			add_genome(std::move(tmp_genome));
+		}
 	}
 
 	Const_Genome_Iterator::Const_Genome_Iterator(

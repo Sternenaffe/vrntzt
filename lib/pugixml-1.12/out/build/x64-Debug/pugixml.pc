@@ -1,0 +1,11 @@
+prefix=D:/Crispin/HTL/Diplomarbeit/vrntzt/vrntzt_1_0/lib/pugixml-1.12/out/install/x64-Debug
+exec_prefix=${prefix}
+includedir=D:/Crispin/HTL/Diplomarbeit/vrntzt/vrntzt_1_0/lib/pugixml-1.12/out/install/x64-Debug/include
+libdir=D:/Crispin/HTL/Diplomarbeit/vrntzt/vrntzt_1_0/lib/pugixml-1.12/out/install/x64-Debug/lib
+
+Name: pugixml
+Description: Light-weight, simple and fast XML parser for C++ with XPath support.
+URL: https://pugixml.org/
+Version: 1.12
+Cflags: -I${includedir}
+Libs: -L${libdir} -lpugixml

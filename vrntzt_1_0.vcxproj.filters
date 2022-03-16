@@ -52,6 +52,12 @@
     <Filter Include="src\Genotype">
       <UniqueIdentifier>{3b2c874b-ae09-4e86-aa76-14477b8d65d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib\pugixml-1.12">
+      <UniqueIdentifier>{a68c402e-8355-406a-8d85-1e70974e57bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\pugixml-1.12\src">
+      <UniqueIdentifier>{ed2a90ff-5fab-473d-8616-bcd8ae90cddf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\main.cpp">
@@ -86,6 +92,9 @@
     </ClCompile>
     <ClCompile Include="src\Genotype\Simplistic_Genotype.cpp">
       <Filter>src\Genotype</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\pugixml-1.12\src\pugixml.cpp">
+      <Filter>lib\pugixml-1.12\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +161,9 @@
     <ClInclude Include="src\Helper\Species.hpp">
       <Filter>src\Helper</Filter>
     </ClInclude>
+    <ClInclude Include="lib\pugixml-1.12\src\pugixml.hpp">
+      <Filter>lib\pugixml-1.12\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\utility\src\has_member.tpp">
@@ -165,6 +177,9 @@
     </None>
     <None Include="src\Helper\Species.tpp">
       <Filter>src\Helper</Filter>
+    </None>
+    <None Include="lib\IO\IO.tpp">
+      <Filter>lib\IO</Filter>
     </None>
   </ItemGroup>
 </Project>

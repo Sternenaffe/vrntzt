@@ -50,12 +50,26 @@ float eval_xor(Simplistic_Genotype* t_genotype)
 	Simplistic_Phenotype phenotype =
 		decode<Simplistic_Genotype, Simplistic_Phenotype>(*t_genotype);
 	
-	fitness += 1 - get_xor(phenotype, 0, 0);
-	fitness += get_xor(phenotype, 0, 1);
-	fitness += get_xor(phenotype, 1, 0);
-	fitness += 1 - get_xor(phenotype, 1, 1);
+	float out0 = get_xor(phenotype, 0, 0);
+	float out1 = get_xor(phenotype, 0, 1);
+	float out2 = get_xor(phenotype, 1, 0);
+	float out3 = get_xor(phenotype, 1, 1);
 
-	std::cout << "fitness: " << fitness << "\n";
+	// odd exponent because of negative numbers
+	fitness += pow(1 - out0, 5);
+	fitness += 1 + pow(out1 - 1, 5);
+	fitness += 1 + pow(out2 - 1, 5);
+	fitness += pow(1 - out3, 5);
+
+	//fitness = pow(fitness, 4);
+
+	// bounty for having every output in right half
+	if (out0 < 0.5f && out1 > 0.5f && out2 > 0.5f && out3 < 0.5f)
+	{
+		fitness += 10;
+	}
+
+	// std::cout << "fitness: " << fitness << "\n";
 
 	return fitness;
 }
@@ -73,15 +87,31 @@ int main()
 	//eval_xor(&test_genotype);
 	//return 0;
 
-	Neat_Evolution_Settings ev_settings;
-	ev_settings.population_size = 100;
+	Neat_Evolution_Settings ev_settings =
+	{
+		.population_size = 250,
+		.species_count = 25
+	};
+	
 	Neat_Evolution_Manager<Simplistic_Genotype, Simplistic_Phenotype>
 		ev_manager(2, 1, ev_settings);
 
 	ev_manager.create_random_population();
 
-	for (int i = 0; i < 500; ++i)
+	uint generation = 0;
+
+	//for (int i = 0; i < 1000; ++i)
+	while (true)
 	{
+		++generation;
+
+		/*if (generation == 100)
+		{
+			ev_manager.save("test_save.xml");
+			ev_manager.load("test_save.xml");
+			ev_manager.save("test_after_load.xml");
+		}*/
+
 		// get fitness
 		for (auto& genotype : ev_manager.get_population())
 		{
@@ -89,8 +119,18 @@ int main()
 			genotype->set_fitness(eval_xor(genotype.get()));
 		}
 
-		IO::debug("\n================================================\n");
-		IO::debug("Generation " + std::to_string(i) + "\n");
+		auto best_genotype = ev_manager.get_previous_best_genotype();
+
+		IO::out("\nbest genotype fitness: " + std::to_string(best_genotype->get_fitness()) + "\n");
+
+		if (best_genotype->get_fitness() > 13.9)
+		{
+			ev_manager.save("xor_solution.xml");
+			return 0;
+		}
+
+		IO::out("\n================================================\n");
+		IO::out("Generation " + std::to_string(generation) + "\n");
 
 		ev_manager.evolve_population();
 

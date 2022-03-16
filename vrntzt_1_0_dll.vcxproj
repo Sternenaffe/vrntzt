@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\c_dll\internal_alias.hpp" />
+    <ClInclude Include="include\c_dll\IO_wrapper.h" />
     <ClInclude Include="include\c_dll\simplistic_genotype_wrapper.h" />
     <ClInclude Include="include\c_dll\simplistic_phenotype_wrapper.h" />
     <ClInclude Include="include\c_dll\vrntzt_neat.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="include\Phenotype\Simplistic_Phenotype.hpp" />
     <ClInclude Include="include\vrntzt_global.hpp" />
     <ClInclude Include="lib\IO\IO.hpp" />
+    <ClInclude Include="lib\pugixml-1.12\src\pugixml.hpp" />
     <ClInclude Include="lib\utility\include\fixed_vector.hpp" />
     <ClInclude Include="lib\utility\include\has_member.hpp" />
     <ClInclude Include="lib\utility\include\interface.hpp" />
@@ -48,9 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\IO\IO.cpp" />
+    <ClCompile Include="lib\pugixml-1.12\src\pugixml.cpp" />
     <ClCompile Include="lib\utility\src\fixed_vector.cpp" />
     <ClCompile Include="lib\utility\src\various.cpp" />
     <ClCompile Include="src\c_dll\dllmain.cpp" />
+    <ClCompile Include="src\c_dll\IO_wrapper.cpp" />
     <ClCompile Include="src\c_dll\neat_evolution_wrapper.cpp" />
     <ClCompile Include="src\c_dll\simplistic_genotype_wrapper.cpp" />
     <ClCompile Include="src\c_dll\simplistic_phenotype_wrapper.cpp" />
@@ -135,26 +139,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(ProjectName)\$(PlatformTarget)\</OutDir>
-    <IntDir>$(Configuration)\$(ProjectName)\$(PlatformTarget)\</IntDir>
+    <OutDir>$(ProjectDir)\bin\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</OutDir>
+    <IntDir>$(ProjectDir)\obj\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(ProjectName)\$(PlatformTarget)\</OutDir>
-    <IntDir>$(Configuration)\$(ProjectName)\$(PlatformTarget)\</IntDir>
+    <OutDir>$(ProjectDir)\bin\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</OutDir>
+    <IntDir>$(ProjectDir)\obj\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(ProjectName)\$(PlatformTarget)\</OutDir>
-    <IntDir>$(Configuration)\$(ProjectName)\$(PlatformTarget)\</IntDir>
+    <OutDir>$(ProjectDir)\bin\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</OutDir>
+    <IntDir>$(ProjectDir)\obj\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\$(ProjectName)\$(PlatformTarget)\</OutDir>
-    <IntDir>$(Configuration)\$(ProjectName)\$(PlatformTarget)\</IntDir>
+    <OutDir>$(ProjectDir)\bin\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</OutDir>
+    <IntDir>$(ProjectDir)\obj\$(ProjectName)\$(Configuration)_$(PlatformTarget)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -183,6 +187,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>include/vrntzt_pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -219,6 +224,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>include/vrntzt_pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
