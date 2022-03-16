@@ -39,19 +39,19 @@ namespace vrntzt::neat::c_dll
 	}
 
 	void save(const Neat_Evolution_Manager_Wrapper t_wrapper,
-		const std::string t_file)
+		const char* t_file)
 	{
 		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
 			t_wrapper);
-		//manager->save(t_file);
+		manager->save(t_file);
 	}
 
 	void load(const Neat_Evolution_Manager_Wrapper t_wrapper,
-		const std::string t_file)
+		const char* t_file)
 	{
 		Internal_Simplistic_Neat_Evolution_Manager* manager = _unwrap_ev_manager(
 			t_wrapper);
-		//manager->load(t_file);
+		manager->load(t_file);
 	}
 
 	// simple forward

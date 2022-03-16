@@ -62,11 +62,11 @@ namespace vrntzt::neat::c_dll
 
 	extern "C" VRNTZT_NEAT_C_DLL_API
 	void save(const Neat_Evolution_Manager t_wrapper,
-		const std::string t_file);
+		const char* t_file);
 
 	extern "C" VRNTZT_NEAT_C_DLL_API
 	void load(const Neat_Evolution_Manager t_wrapper,
-		const std::string t_file);
+		const char* t_file);
 
 	extern "C" VRNTZT_NEAT_C_DLL_API
 	void create_random_population(const Neat_Evolution_Manager t_wrapper);

@@ -1,0 +1,52 @@
+﻿<Project>
+  <PropertyGroup>
+	<BaseIntermediateOutputPath>obj\vrntzt_csharp_api_test\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+	<OutputPath>bin\vrntzt_csharp_api_test\$(Configuration)</OutputPath>
+	<IntermediateOutputPath>obj\vrntzt_csharp_api_test\$(Configuration)</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="doc\**" />
+    <Compile Remove="include\**" />
+    <Compile Remove="lib\**" />
+    <Compile Remove="obj\**" />
+    <Compile Remove="src\**" />
+    <EmbeddedResource Remove="doc\**" />
+    <EmbeddedResource Remove="include\**" />
+    <EmbeddedResource Remove="lib\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="src\**" />
+    <None Remove="doc\**" />
+    <None Remove="include\**" />
+    <None Remove="lib\**" />
+    <None Remove="obj\**" />
+    <None Remove="src\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="test\main.cpp" />
+    <None Remove="vrntzt_1_0.vcxproj.filters" />
+    <None Remove="vrntzt_1_0_dll.vcxproj.filters" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="vrntzt_csharp_api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="vrntzt_neat_c_dll_1_0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+	
+</Project>

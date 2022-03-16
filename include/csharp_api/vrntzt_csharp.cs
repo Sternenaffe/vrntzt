@@ -23,37 +23,77 @@ namespace vrntzt.neat.csharp_api
     /// OutputCallback
     /// there are 4 different output streams: out, debug, warning and error
     /// </summary>
-    public static class IO
+    public static partial class IO
     {
         /// <summary>
         /// set callback functions for all streams
         /// </summary>
-        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_all_streams")]
-        public static extern void SetAllStreams(OutputCallback t_callback_f);
+        public static void SetAllStreams(OutputCallback t_callback_f)
+        {
+            if (_all_streams_handle.HasValue)
+            {
+                _all_streams_handle.Value.Free();
+            }
+
+            _all_streams_handle = GCHandle.Alloc(t_callback_f);
+            _setAllStreams(t_callback_f);
+        }
 
         /// <summary>
         /// set callback functions for output stream
         /// </summary>
-        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_out_stream")]
-        public static extern void SetOutStream(OutputCallback t_callback_f);
+        public static void SetOutStream(OutputCallback t_callback_f)
+        {
+            if (_out_stream_handle.HasValue)
+            {
+                _out_stream_handle.Value.Free();
+            }
+
+            _out_stream_handle = GCHandle.Alloc(t_callback_f);
+            _setOutStream(t_callback_f);
+        }
 
         /// <summary>
         /// set callback functions for debug stream
         /// </summary>
-        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_debug_stream")]
-        public static extern void SetDebugStream(OutputCallback t_callback_f);
+        public static void SetDebugStream(OutputCallback t_callback_f)
+        {
+            if (_debug_stream_handle.HasValue)
+            {
+                _debug_stream_handle.Value.Free();
+            }
+
+            _debug_stream_handle = GCHandle.Alloc(t_callback_f);
+            _setDebugStream(t_callback_f);
+        }
 
         /// <summary>
         /// set callback functions for warnings
         /// </summary>
-        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "get_fset_warning_streamitness")]
-        public static extern void SetWarningStream(OutputCallback t_callback_f);
+        public static void SetWarningStream(OutputCallback t_callback_f)
+        {
+            if (_warning_stream_handle.HasValue)
+            {
+                _warning_stream_handle.Value.Free();
+            }
+
+            _warning_stream_handle = GCHandle.Alloc(t_callback_f);
+            _setWarningStream(t_callback_f);
+        }
 
         /// <summary>
         /// set callback functions for errors
         /// </summary>
-        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_error_stream")]
-        public static extern void SetErrorStream(OutputCallback t_callback_f);
+        public static void SetErrorStream(OutputCallback t_callback_f)
+        {
+            if (_error_stream_handle.HasValue)
+            {
+                _error_stream_handle.Value.Free();
+            }
+
+            _error_stream_handle = GCHandle.Alloc(t_callback_f);
+            _setErrorStream(t_callback_f);
+        }
     }
 
     /// <summary>
@@ -101,7 +141,8 @@ namespace vrntzt.neat.csharp_api
         /// </summary>
         public void Save(string t_file)
         {
-            _save(_handler, Encoding.ASCII.GetBytes(t_file));
+            byte[] tmp_string = Encoding.ASCII.GetBytes(t_file);
+            _save(_handler, tmp_string);
         }
 
         /// <summary>
@@ -109,7 +150,8 @@ namespace vrntzt.neat.csharp_api
         /// </summary>
         public void Load(string t_file)
         {
-            _load(_handler, Encoding.ASCII.GetBytes(t_file));
+           byte[] tmp_string = Encoding.ASCII.GetBytes(t_file);
+            _load(_handler, tmp_string);
         }
 
         /// <summary>

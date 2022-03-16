@@ -5,12 +5,38 @@
 // c# api
 // implementation for simplistic genotype/phenotype & corresponding evolution
 
+// TODO: reduce IO callback handles to 4 instead of 5
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace vrntzt.neat.csharp_api
 {
+    public static partial class IO
+    {
+        static GCHandle? _all_streams_handle = null;
+        static GCHandle? _out_stream_handle = null;
+        static GCHandle? _debug_stream_handle = null;
+        static GCHandle? _warning_stream_handle = null;
+        static GCHandle? _error_stream_handle = null;
+
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_all_streams")]
+        public static extern void _setAllStreams(OutputCallback t_callback_f);
+
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_out_stream")]
+        public static extern void _setOutStream(OutputCallback t_callback_f);
+
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_debug_stream")]
+        public static extern void _setDebugStream(OutputCallback t_callback_f);
+
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "get_fset_warning_streamitness")]
+        public static extern void _setWarningStream(OutputCallback t_callback_f);
+
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_error_stream")]
+        public static extern void _setErrorStream(OutputCallback t_callback_f);
+    }
+
     public partial class SimplisticPhenotype : IDisposable
     {
         #region NON_PUBLIC_METHODS
@@ -134,7 +160,7 @@ namespace vrntzt.neat.csharp_api
         private static extern void _load(
             NeatEvolutionManagerHandler t_manager, byte[] t_file);
 
-        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "evolvePopulation")]
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "evolve_population")]
         private static extern void _evolvePopulation(
             NeatEvolutionManagerHandler t_manager);
 

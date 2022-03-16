@@ -251,6 +251,11 @@ namespace vrntzt::neat
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
 	void Neat_Evolution_Manager<Genotype, Phenotype>::save(std::string t_file_path)
 	{
+		if constexpr (NEAT_EVOLUTION_MANAGER_DEBUG)
+		{
+			IO::debug("save population to " + t_file_path);
+		}
+
 		pugi::xml_document doc;
 		// append base node
 		pugi::xml_node base_node = doc.append_child("Neat_Evolution_Manager");
@@ -263,6 +268,11 @@ namespace vrntzt::neat
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
 	void Neat_Evolution_Manager<Genotype, Phenotype>::load(std::string t_file_path)
 	{
+		if constexpr (NEAT_EVOLUTION_MANAGER_DEBUG)
+		{
+			IO::debug("load population from " + t_file_path);
+		}
+
 		pugi::xml_document doc;
 		doc.load_file(t_file_path.c_str());
 

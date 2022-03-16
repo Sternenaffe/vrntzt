@@ -168,6 +168,7 @@ namespace vrntzt::neat
 
 		const uint add_neuron_chance = 3 * 1000;
 		const uint add_connection_chance = 5 * 1000;
+		// const uint delete_connection_chance
 
 	public:
 		// forward dec

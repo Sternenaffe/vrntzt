@@ -89,12 +89,12 @@ int main()
 
 	Neat_Evolution_Settings ev_settings =
 	{
-		.population_size = 250,
-		.species_count = 25
+		.population_size = 500,
+		.species_count = 50
 	};
 	
 	Neat_Evolution_Manager<Simplistic_Genotype, Simplistic_Phenotype>
-		ev_manager(2, 1, ev_settings);
+		ev_manager(500, 1, ev_settings);
 
 	ev_manager.create_random_population();
 

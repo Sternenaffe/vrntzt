@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace vrntzt.neat.csharp_api
+namespace vrntzt.neat.csharp_api.test
 { 
     public static class NeatXor
     {
@@ -68,6 +68,10 @@ namespace vrntzt.neat.csharp_api
             manager.CreateRandomPopulation();
 
             uint generation = 0;
+
+            manager.Save("test.xml");
+            manager.Load("test.xml");
+            manager.Save("test_com.xml");
 
             while (true)
             {
