@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Linq;
 
 namespace vrntzt.neat.csharp_api.test
 { 
@@ -50,7 +51,7 @@ namespace vrntzt.neat.csharp_api.test
 
         static void Main(string[] args)
         {
-            // set output callback
+            // set output callbacks
             IO.SetAllStreams(OutputCallbackFunction);
 
             Random random = new Random();
@@ -75,6 +76,8 @@ namespace vrntzt.neat.csharp_api.test
 
             while (true)
             {
+                manager.GetPreviousBestGenotype();
+
                 Console.WriteLine($"\n============== Generation {++generation} ==============");
 
                 // eval fitness

@@ -37,7 +37,8 @@ float get_xor(Simplistic_Phenotype& t_phenotype, float t_in1, float t_in2)
 	t_phenotype.reset();
 	t_phenotype.set_input(0, t_in1);
 	t_phenotype.set_input(1, t_in2);
-	t_phenotype.activate(10);
+
+	t_phenotype.activate(3);
 
 	return t_phenotype.get_output(0);
 }
@@ -89,57 +90,55 @@ int main()
 
 	Neat_Evolution_Settings ev_settings =
 	{
-		.population_size = 500,
-		.species_count = 50
+		.population_size = 200,
+		.species_count = 50	
 	};
-	
+
 	Neat_Evolution_Manager<Simplistic_Genotype, Simplistic_Phenotype>
-		ev_manager(500, 1, ev_settings);
+		ev_manager(2, 1, ev_settings);
 
-	ev_manager.create_random_population();
+	uint generation_avg = 0;
 
-	uint generation = 0;
-
-	//for (int i = 0; i < 1000; ++i)
-	while (true)
+	for (uint i = 0; i < 10; ++i)
 	{
-		++generation;
+		uint generation = 0;
 
-		/*if (generation == 100)
-		{
-			ev_manager.save("test_save.xml");
-			ev_manager.load("test_save.xml");
-			ev_manager.save("test_after_load.xml");
-		}*/
+		ev_manager.create_random_population();
 
-		// get fitness
-		for (auto& genotype : ev_manager.get_population())
+		//for (int i = 0; i < 1000; ++i)
+		while (true)
 		{
-			// bottleneck - i guess sorting in decoding
-			genotype->set_fitness(eval_xor(genotype.get()));
+			++generation;
+
+			// get fitness
+			for (auto& genotype : ev_manager.get_population())
+			{
+				// bottleneck - i guess sorting in decoding
+				// genotype->set_fitness(eval_xor(genotype.get()));
+				genotype->set_fitness(0);
+			}
+
+			auto best_genotype = ev_manager.get_previous_best_genotype();
+
+			IO::out("\nbest genotype fitness: " + std::to_string(best_genotype->get_fitness()) + "\n");
+
+			if (best_genotype->get_fitness() > 13.9)
+			{
+				ev_manager.save("xor_solution.xml");
+				//return 0;
+				break;
+			}
+
+			IO::out("\n================================================\n");
+			IO::out("Generation " + std::to_string(generation) + "\n");
+
+			ev_manager.evolve_population();
 		}
 
-		auto best_genotype = ev_manager.get_previous_best_genotype();
-
-		IO::out("\nbest genotype fitness: " + std::to_string(best_genotype->get_fitness()) + "\n");
-
-		if (best_genotype->get_fitness() > 13.9)
-		{
-			ev_manager.save("xor_solution.xml");
-			return 0;
-		}
-
-		IO::out("\n================================================\n");
-		IO::out("Generation " + std::to_string(generation) + "\n");
-
-		ev_manager.evolve_population();
-
-		/*for (auto& genotype : ev_manager.get_population())
-		{
-			IO::debug(genotype->get_genomes_string());
-			IO::debug("\n");
-		}*/
+		generation_avg += generation;
 	}
+
+	std::cout << "\n\n\nAverage Generations: " << generation_avg / 10 << "\n";
 	
 	return 0;
 

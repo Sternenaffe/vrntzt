@@ -111,6 +111,11 @@ namespace vrntzt::neat
 		}
 	}
 
+	void Genome::reset_innovation_num()
+	{
+		_global_innovation_num = 0;
+	}
+
 	Genome Genome::load_from_xml(pugi::xml_node t_xml_node)
 	{
 		Genome tmp_genome;
@@ -223,7 +228,25 @@ namespace vrntzt::neat
 		fixed_neuron_num(t_other.fixed_neuron_num),
 		_genomes(t_other._genomes),
 		_connected_hidden_neurons(t_other._connected_hidden_neurons),
-		_fitness(0)
+		_fitness(0),
+		_interspecies_reproduction_chance(
+			t_other._interspecies_reproduction_chance),
+		_sexual_reproduction_chance(
+			t_other._sexual_reproduction_chance),
+		_no_match_genome_chance(
+			t_other._no_match_genome_chance),
+		_weight_mutation_chance(
+			t_other._weight_mutation_chance),
+		_weight_perturb_chance(
+			t_other._weight_perturb_chance),
+		_randomize_weight_chance(
+			t_other._randomize_weight_chance),
+		_add_neuron_chance(
+			t_other._add_neuron_chance),
+		_add_connection_chance(
+			t_other._add_connection_chance),
+		_delete_connection_chance(
+			t_other._delete_connection_chance)
 	{
 	}
 
@@ -359,9 +382,9 @@ namespace vrntzt::neat
 			total_genome_num;
 
 		// calculate final distance
-		float distance = distance_disjoint_relevance * portion_disjoint_genomes +
-			distance_excess_relevance * portion_excess_genomes +
-			distance_weight_relevance * avg_weight_diff;
+		float distance = _distance_disjoint_relevance * portion_disjoint_genomes +
+			_distance_excess_relevance * portion_excess_genomes +
+			_distance_weight_relevance * avg_weight_diff;
 
 		if constexpr (SIMPLISTIC_GENOTYPE_DISTANCE_DEBUG)
 		{
@@ -380,11 +403,11 @@ namespace vrntzt::neat
 
 	Reproduction_Type Simplistic_Genotype::get_reproduction_type()
 	{
-		if (r_gen.randint(max_chance) <= interspecies_reproduction_chance)
+		if (r_gen.rand() <= _interspecies_reproduction_chance)
 		{
 			return Reproduction_Type::interspecies_reproduction;
 		}
-		else if (r_gen.randint(max_chance) <= sexual_reproduction_chance)
+		else if (r_gen.rand() <= _sexual_reproduction_chance)
 		{
 			return Reproduction_Type::sexual_reproduction;
 		}
@@ -446,6 +469,11 @@ namespace vrntzt::neat
 		return _connected_hidden_neurons;
 	}
 
+	void Simplistic_Genotype::reset_global_neuron_num()
+	{
+		_global_neuron_num = 0;
+	}
+
 	// if same fitness = false: t_other is genome with lower fitness
 	Simplistic_Genotype Simplistic_Genotype::_mate(
 		const Simplistic_Genotype& t_other, const bool t_same_fitness)
@@ -454,7 +482,7 @@ namespace vrntzt::neat
 		vector<Genome> offspring_genomes;
 
 		// if different fitness: first genome list needs to be of genotype
-		// with higher fitness!s
+		// with higher fitness!
 		const vector<Genome>& higher_fitness_genomes =
 			get_fitness() > t_other.get_fitness() ? _genomes : t_other._genomes;
 		const vector<Genome>& lower_fitness_genomes =
@@ -482,6 +510,8 @@ namespace vrntzt::neat
 		Simplistic_Genotype offspring(input_num, output_num,
 			offspring_genomes);
 
+		offspring._calculate_reproduction_settings(*this, t_other);
+
 		if constexpr (SIMPLISTIC_GENOTYPE_MATING_DEBUG)
 		{
 			std::ostringstream tmp_string;
@@ -505,6 +535,40 @@ namespace vrntzt::neat
 		}
 
 		return offspring;
+	}
+
+	void Simplistic_Genotype::_calculate_reproduction_settings(const Simplistic_Genotype& t_first, const Simplistic_Genotype& t_second)
+	{
+		if (ENABLE_REPRODUCTION_SETTING_MUTATION)
+		{
+			_interspecies_reproduction_chance =
+				(t_first._interspecies_reproduction_chance +
+				 t_second._interspecies_reproduction_chance) / 2;
+			_sexual_reproduction_chance =
+				(t_first._sexual_reproduction_chance +
+				 t_second._sexual_reproduction_chance) / 2;
+			_no_match_genome_chance =
+				(t_first._no_match_genome_chance +
+				 t_second._no_match_genome_chance) / 2;
+			_weight_mutation_chance =
+				(t_first._weight_mutation_chance +
+				 t_second._weight_mutation_chance) / 2;
+			_weight_perturb_chance = 
+				(t_first._weight_perturb_chance +
+				 t_second._weight_perturb_chance) / 2;
+			_randomize_weight_chance = 
+				(t_first._randomize_weight_chance +
+				 t_second._randomize_weight_chance) / 2;
+			_add_neuron_chance = 
+				(t_first._add_neuron_chance +
+				 t_second._add_neuron_chance) / 2;
+			_add_connection_chance =
+				(t_first._add_connection_chance +
+				 t_second._add_connection_chance) / 2;
+			_delete_connection_chance =
+				(t_first._delete_connection_chance +
+				 t_second._delete_connection_chance) / 2;
+		}
 	}
 
 	void Simplistic_Genotype::_next_same_fitness_mating_step(
@@ -574,8 +638,7 @@ namespace vrntzt::neat
 
 	bool Simplistic_Genotype::_chance_add_genome() const
 	{
-		uint chance = r_gen.randint(1, max_chance);
-		return no_match_genome_chance >= chance;
+		return r_gen.rand() <= _no_match_genome_chance;
 	}
 
 	Simplistic_Genotype Simplistic_Genotype::mutate()
@@ -584,15 +647,14 @@ namespace vrntzt::neat
 		constexpr bool single_weight_mutation = true;
 
 		Simplistic_Genotype new_genotype(*this);
-		uint chance = 0;
+		new_genotype._mutate_reproduction_settings();
 
 		if constexpr (!single_weight_mutation)
 		{
 			// mutate genome weights
 			for (auto& genome : new_genotype._genomes)
 			{
-				chance = r_gen.randint(1, max_chance);
-				if (weight_mutation_chance >= chance)
+				if (r_gen.rand() <= _weight_mutation_chance)
 				{
 					new_genotype._mutate_weight(genome);
 				}
@@ -600,8 +662,7 @@ namespace vrntzt::neat
 		}
 		else
 		{
-			chance = r_gen.randint(1, max_chance);
-			if (weight_mutation_chance >= chance)
+			if (r_gen.rand() <= _weight_mutation_chance)
 			{
 				// pick random genome & mutate weight
 				Genome& r_genome = r_gen.random_item(new_genotype._genomes);
@@ -610,17 +671,21 @@ namespace vrntzt::neat
 		}
 
 		// add connection
-		chance = r_gen.randint(1, max_chance);
-		if (add_connection_chance >= chance)
+		if (r_gen.rand() <= _add_connection_chance)
 		{
 			new_genotype._mutate_new_conn();
 		}
 
 		// add neuron
-		chance = r_gen.randint(1, max_chance);
-		if (add_neuron_chance >= chance)
+		if (r_gen.rand() <= _add_neuron_chance)
 		{
 			new_genotype._mutate_new_neuron();
+		}
+
+		// delete connection
+		if (r_gen.rand() <= _delete_connection_chance)
+		{
+			new_genotype._delete_conn();
 		}
 
 		return new_genotype;
@@ -639,7 +704,7 @@ namespace vrntzt::neat
 
 	bool Simplistic_Genotype::perform_sexual_reproduction() const
 	{
-		return r_gen.randint(max_chance) < sexual_reproduction_chance;
+		return r_gen.rand() <= _sexual_reproduction_chance;
 	}
 
 	const vector<Genome>& Simplistic_Genotype::get_genome_list() const
@@ -650,9 +715,7 @@ namespace vrntzt::neat
 	// REFACTOR!!!
 	void Simplistic_Genotype::_mutate_weight(Genome& t_genome)
 	{
-		uint chance = r_gen.randint(1, max_chance);
-
-		if (randomize_weight_chance >= chance)
+		if (r_gen.rand() <= _randomize_weight_chance)
 		{
 			t_genome.randomize_weight();
 		}
@@ -753,6 +816,68 @@ namespace vrntzt::neat
 			chosen_connection.target_neuron, 1.0f));
 	}
 
+	void Simplistic_Genotype::_delete_conn()
+	{
+		// avoid empty container
+		if (_genomes.size() == 1)
+		{
+			return;
+		}
+
+		// pick random genome and remove
+		size_t t_genome_index = r_gen.randint(static_cast<int>(_genomes.size() - 1));
+		_genomes.erase(_genomes.begin() + t_genome_index);
+	}
+
+	void Simplistic_Genotype::_mutate_reproduction_settings()
+	{
+		if (ENABLE_REPRODUCTION_SETTING_MUTATION)
+		{
+			_mutate_reproduction_dimension(_interspecies_reproduction_chance);
+			_mutate_reproduction_dimension(_sexual_reproduction_chance);
+			_mutate_reproduction_dimension(_no_match_genome_chance);
+			_mutate_reproduction_dimension(_weight_mutation_chance);
+			_mutate_reproduction_dimension(_weight_perturb_chance);
+			_mutate_reproduction_dimension(_randomize_weight_chance);
+			_mutate_reproduction_dimension(_add_neuron_chance);
+			_mutate_reproduction_dimension(_add_connection_chance);
+			_mutate_reproduction_dimension(_delete_connection_chance);
+		}
+	}
+
+	void Simplistic_Genotype::_mutate_reproduction_dimension(float& t_value)
+	{
+		// not to small if dimension is very small - this avoids very
+		// long mutation time if is really wrong
+		// 1%	-> change of up to 0.4%
+		// 10%	-> change of up to 3.5%
+		// 100% -> change of up to 10%
+		const float delta = 0.1f * (-pow(t_value - 1, 2) + 1);
+		// avoids 0 or lower
+		const float lower_bound = t_value - delta;
+		const float upper_bound = t_value + delta;
+
+		// with 10%: high mutation (5% high, 5% lower)
+		float chance = r_gen.rand();
+		if (chance < 0.05)
+		{
+			t_value = r_gen.rand(upper_bound, upper_bound + delta);
+		}
+		else if (chance < 0.1)
+		{
+			t_value = r_gen.rand(lower_bound - delta, lower_bound);
+		}
+		// normal mutation
+		else
+		{
+			// dimension is random value between lower and upper bound
+			t_value = r_gen.rand(lower_bound, upper_bound);
+		}
+
+		// value should between 1 and 0.0005
+		t_value = std::min(1.0f, std::max(0.0005f, t_value));
+	}
+
 	/*void swap(Genome& t_first, Genome& t_second)
 	{
 		using std::swap;
@@ -762,6 +887,25 @@ namespace vrntzt::neat
 	void swap(Simplistic_Genotype& t_first, Simplistic_Genotype& t_second)
 	{
 		using std::swap;
+
+		t_first._interspecies_reproduction_chance =
+			t_second._interspecies_reproduction_chance;
+		t_first._sexual_reproduction_chance =
+			t_second._sexual_reproduction_chance;
+		t_first._no_match_genome_chance =
+			t_second._no_match_genome_chance;
+		t_first._weight_mutation_chance =
+			t_second._weight_mutation_chance;
+		t_first._weight_perturb_chance =
+			t_second._weight_perturb_chance;
+		t_first._randomize_weight_chance =
+			t_second._randomize_weight_chance;
+		t_first._add_neuron_chance =
+			t_second._add_neuron_chance;
+		t_first._add_connection_chance =
+			t_second._add_connection_chance;
+		t_first._delete_connection_chance =
+			t_second._delete_connection_chance;
 
 		swap(t_first._genomes, t_second._genomes);
 		swap(t_first._connected_hidden_neurons,

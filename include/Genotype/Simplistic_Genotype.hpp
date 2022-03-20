@@ -52,6 +52,9 @@
 //		 have subsequent number, connected_hidden_neurons should map to global
 //		 neuron numbers
 
+// IDEA: track genomes through combination of origin generation, source and 
+//	     target neuron this enables easier sorting and avoiding multiple
+//	     connections with same source & target
 // IDEA: chance of new connection/new neuron proportinal to genome num?
 // IDEA: let mutation chances be determined by genomes to?
 // IDEA: distance settings could be made variable with two-way distance
@@ -133,6 +136,8 @@ namespace vrntzt::neat
 
 		static Genome crossover(const Genome& t_first, const Genome& t_second);
 
+		static void reset_innovation_num();
+
 		// innovation number, unique to this source-target
 		// neuron combination
 		uint innovation_num = 0;
@@ -141,34 +146,39 @@ namespace vrntzt::neat
 
 	class Simplistic_Genotype : public IGenotype<Simplistic_Genotype>
 	{
+	// quick and dirty (avoid getter/setter)
+
+	public:
+		const bool ENABLE_REPRODUCTION_SETTING_MUTATION = false;
+
 		// distance settings
 		// values taken from neat paper
-		const float distance_disjoint_relevance = 3.0f;
-		const float distance_excess_relevance = 3.0f;
-		const float distance_weight_relevance = 1.0f;
+		const float _distance_disjoint_relevance = 1.0f;
+		const float _distance_excess_relevance = 1.0f;
+		const float _distance_weight_relevance = 0.4f;
 
 		// chance: 1% = 1000 (1:100_000)
-		const uint max_chance = 100 * 1000;
+		// const uint max_chance = 100 * 1000;
 
 		// determines how often sexual reproduction with individual which
 		// is not compatible will occur
-		const uint interspecies_reproduction_chance = static_cast<uint>(0.1 * 1000);
+		float _interspecies_reproduction_chance = 0.1f;
 		// determines how often sexual and asexual respectively
 		// reproduction will occur
-		const uint sexual_reproduction_chance = 75 * 1000;
+		float _sexual_reproduction_chance = 0.75f;
 
 		// chance that excess/disjoint genomes are picked when
 		// parent fitness is same
-		const uint no_match_genome_chance = 50 * 1000;
+		float _no_match_genome_chance = 0.5f;
 		
-		const uint weight_mutation_chance = 70 * 1000;
-		const uint weight_perturb_chance = 90 * 1000;
+		float _weight_mutation_chance = 0.8f;
+		float _weight_perturb_chance = 0.9f;
 		// probability that connection will get completely new weight
-		const uint randomize_weight_chance = 10 * 1000;
+		float _randomize_weight_chance = 0.1f;
 
-		const uint add_neuron_chance = 3 * 1000;
-		const uint add_connection_chance = 5 * 1000;
-		// const uint delete_connection_chance
+		float _add_neuron_chance = 0.03f;
+		float _add_connection_chance = 0.05f;
+		float _delete_connection_chance = -1.0f;
 
 	public:
 		// forward dec
@@ -237,6 +247,9 @@ namespace vrntzt::neat
 		// genotype neuron num to phenotype neuron num
 		const std::vector<size_t>& get_hidden_neurons() const;
 
+		// should not exist
+		static void reset_global_neuron_num();
+
 	private:
 		float _fitness = 0.0f;
 
@@ -257,6 +270,10 @@ namespace vrntzt::neat
 		Simplistic_Genotype _mate(const Simplistic_Genotype& t_other,
 			const bool t_same_fitness) const;
 
+		// calculate reproduction settings from parents
+		void _calculate_reproduction_settings(const Simplistic_Genotype& t_first,
+			const Simplistic_Genotype& t_second);
+
 		// add next offspring genome if parents have same fitness
 		void _next_same_fitness_mating_step(std::vector<Genome>& t_genomes,
 			const Const_Genome_Iterator& t_iter)
@@ -276,6 +293,13 @@ namespace vrntzt::neat
 		void _mutate_new_conn();
 		// mutation that adds new neuron by spliting existing connection
 		void _mutate_new_neuron();
+		// deletes random connection
+		void _delete_conn();
+
+		// mutate all reproduction settings
+		void _mutate_reproduction_settings();
+		// mutate single dimension
+		void _mutate_reproduction_dimension(float& t_value);
 
 	public:
 		// wrapps two genome lists and simplifies iteration

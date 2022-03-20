@@ -29,6 +29,7 @@
 //			  delegate storing of fitness to neat evolution, this could include
 //			  an validity check - should create an
 //			  evolution manager and some kind of habitate-class
+// IMPORTANT: change reset
 
 // TODO: check and rethink types
 // TODO: rewrite save & load (SRT and HR_Serializable interface)
@@ -56,6 +57,7 @@ namespace vrntzt::neat
 	constexpr bool NEAT_EVOLUTION_MANAGER_SPECIATION_DEBUG = false;
 	constexpr bool NEAT_EVOLUTION_MANAGER_EVOLUTION_DEBUG = false;
 	constexpr bool NEAT_EVOLUTION_MANAGER_MATING_DEBUG = false;
+	constexpr bool NEAT_EVOLUTION_MANAGER_REPRODUCTION_SETTINGS_DEBUG = false;
 
 	// if add constructor: need to write wrapper for c_dll!
 	struct Neat_Evolution_Settings
@@ -95,7 +97,7 @@ namespace vrntzt::neat
 		const std::shared_ptr<Genotype> get_previous_best_genotype();
 
 		void create_random_population();
-		void delete_population();
+		void reset();
 
 		void evolve_population();
 
@@ -110,13 +112,16 @@ namespace vrntzt::neat
 	private:
 		void _add_genotype_to_population(const Genotype& t_genotype);
 
+		// calculates all relevant metrics
+		void _calculate_generation_metrics();
+
 		// evaluate which species should be transfered to next generation, this
 		// is in order to track species over multiple generations
 		void _eliminate_weak_species();
 
 		// species with former champions will already exist if not first gen
 		void _speciate_population();
-		
+
 		// delete species which didn't made progress
 		// for too long
 		// also remove empty species

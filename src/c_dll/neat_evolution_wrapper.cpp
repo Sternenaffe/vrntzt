@@ -108,6 +108,7 @@ namespace vrntzt::neat::c_dll
 		// handler needs to have non-const pointer
 		Internal_Simplistic_Genotype* best_genotype_ptr =
 			const_cast<Internal_Simplistic_Genotype*>(best_genotype.get());
+
 		return _wrap_simplistic_genotype(best_genotype_ptr);
 	}
 }

@@ -30,7 +30,7 @@ namespace vrntzt.neat.csharp_api
         [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_debug_stream")]
         public static extern void _setDebugStream(OutputCallback t_callback_f);
 
-        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "get_fset_warning_streamitness")]
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_warning_stream")]
         public static extern void _setWarningStream(OutputCallback t_callback_f);
 
         [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "set_error_stream")]
@@ -168,6 +168,10 @@ namespace vrntzt.neat.csharp_api
         private static extern void _getPopulation(
             NeatEvolutionManagerHandler t_wrapped_manager,
             [Out] SimplisticGenotypeHandler[] t_target, ulong t_target_size);
+
+        [DllImport("vrntzt_neat_c_dll_1_0.dll", EntryPoint = "get_previous_best_genotype")]
+        private static extern SimplisticGenotypeHandler _getPreviousBestGenotype(
+            NeatEvolutionManagerHandler t_wrapped_manager);
 
         #endregion PRIVATE_DLL_METHODS
     }

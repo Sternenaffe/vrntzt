@@ -95,7 +95,7 @@ namespace vrntzt::neat
 			IO::debug("creating random population\n");
 		}
 
-		_population.clear();
+		reset();
 		
 		for (uint i = 0; i < _population_size; ++i)
 		{
@@ -109,12 +109,17 @@ namespace vrntzt::neat
 	}
 
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
-	void Neat_Evolution_Manager<Genotype, Phenotype>::delete_population()
+	void Neat_Evolution_Manager<Genotype, Phenotype>::reset()
 	{
 		_population.clear();
 		_species.clear();
+		_prev_best_genotype = nullptr;
 
 		_compatibility_threshold = 5.5f;
+
+		// should change!
+		Genome::reset_innovation_num();
+		Simplistic_Genotype::reset_global_neuron_num();
 	}
 
 	// function is not written in the most efficient way - could merge multiple
@@ -128,17 +133,7 @@ namespace vrntzt::neat
 				"\n");
 		}
 
-		// fitness comparison lambda
-		auto comp_fitness = [](const std::shared_ptr<Genotype>& t_first,
-			const std::shared_ptr<Genotype>& t_second) -> bool
-		{
-			// return true if second has larger fitness
-			return (t_first->get_fitness() < t_second->get_fitness()) ? true : false;
-		};
-
-		// find best genotype of old generation
-		_prev_best_genotype = *std::max_element(_population.begin(), _population.end(),
-			comp_fitness);
+		_calculate_generation_metrics();
 
 		// cleanup old gen
 		// ---------------------------- SPLIT -------------------------------
@@ -282,7 +277,7 @@ namespace vrntzt::neat
 			IO::error("loading file is not valid\n");
 		}
 
-		delete_population();
+		reset();
 
 		// append population node
 		pugi::xml_node population_node = neat_evolution_manager_node.first_child();
@@ -328,6 +323,53 @@ namespace vrntzt::neat
 	{
 		std::shared_ptr<Genotype> genotype_ptr = std::make_shared<Genotype>(t_genotype);
 		_population.push_back(genotype_ptr);
+	}
+
+	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
+	void Neat_Evolution_Manager<Genotype, Phenotype>::_calculate_generation_metrics()
+	{
+		// get best genotype
+		// fitness comparison lambda
+		auto comp_fitness = [](const std::shared_ptr<Genotype>& t_first,
+			const std::shared_ptr<Genotype>& t_second) -> bool
+		{
+			// return true if second has larger fitness
+			return (t_first->get_fitness() < t_second->get_fitness()) ? true : false;
+		};
+		// find best genotype of old generation
+		_prev_best_genotype = *std::max_element(_population.begin(), _population.end(),
+			comp_fitness);
+
+		// calculate most important reproduction setting metrics
+		float weight_mutation_chance_avg = 0;
+		float sexual_reproduction_chance_avg = 0;
+		float add_neuron_chance_avg = 0;
+		float add_connection_chance_avg = 0;
+		float delete_connection_chance_avg = 0;
+
+		for (auto genotype : _population)
+		{
+			sexual_reproduction_chance_avg += genotype->_sexual_reproduction_chance;
+			add_neuron_chance_avg += genotype->_add_neuron_chance;
+			add_connection_chance_avg += genotype->_add_connection_chance;
+			delete_connection_chance_avg += genotype->_delete_connection_chance;
+			weight_mutation_chance_avg += genotype->_weight_mutation_chance;
+		}
+
+		sexual_reproduction_chance_avg /= _population.size();
+		add_neuron_chance_avg /= _population.size();
+		add_connection_chance_avg /= _population.size();
+		delete_connection_chance_avg /= _population.size();
+		weight_mutation_chance_avg /= _population.size();
+
+		if (NEAT_EVOLUTION_MANAGER_REPRODUCTION_SETTINGS_DEBUG)
+		{
+			IO::debug("sexual_reproduction_chance_avg: " + std::to_string(sexual_reproduction_chance_avg) + "\n");
+			IO::debug("add_neuron_chance_avg: " + std::to_string(add_neuron_chance_avg) + "\n");
+			IO::debug("add_connection_chance_avg: " + std::to_string(add_connection_chance_avg) + "\n");
+			IO::debug("delete_connection_chance_avg: " + std::to_string(delete_connection_chance_avg) + "\n");
+			IO::debug("weight_mutation_chance_avg: " + std::to_string(weight_mutation_chance_avg) + "\n");
+		}
 	}
 
 	template<Genotype_Type Genotype, Phenotype_Type Phenotype>
@@ -382,6 +424,12 @@ namespace vrntzt::neat
 				_species.push_back(Species<Genotype>(genotype));
 			}
 		}
+
+		// remove empty species (might be inherited by prev generation but remained
+		// unfilled)
+		_species.erase(std::remove_if(_species.begin(), _species.end(),
+			[](auto const& t_e) { return t_e.size() == 0; }),
+			_species.end());
 
 		if constexpr (NEAT_EVOLUTION_MANAGER_SPECIATION_DEBUG)
 		{

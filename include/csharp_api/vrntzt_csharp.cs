@@ -196,6 +196,15 @@ namespace vrntzt.neat.csharp_api
             return population;
         }
 
+        /// <summary>
+        /// returns best genotype of previous generation
+        /// </summary>
+        /// <returns> </returns>
+        public SimplisticGenotype GetPreviousBestGenotype()
+        {
+            return new SimplisticGenotype(_getPreviousBestGenotype(_handler));
+        }
+
         #endregion PUBLIC_METHODS
     }
 
@@ -287,7 +296,7 @@ namespace vrntzt.neat.csharp_api
     }
 
     /// <summary>
-    /// IMPORTANT: genotype gets invalid after evolvePopulation or createRandomPopulation
+    /// IMPORTANT: genotype gets invalid after EvolvePopulation or createRandomPopulation
     /// are called!
     /// </summary>
     public partial class SimplisticGenotype

@@ -77,9 +77,9 @@ namespace vrntzt::neat
 
 		// returns true if species has not experienced fitness improvement for
 		// too long
-		bool is_stagnating();
+		bool is_stagnating() const;
 
-		size_t size();
+		size_t size() const;
 
 		std::shared_ptr<Genotype>& get_champion();
 		std::shared_ptr<Genotype>& get_representative();

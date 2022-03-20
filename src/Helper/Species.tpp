@@ -187,7 +187,7 @@ namespace vrntzt::neat
 	}
 
 	template<Genotype_Type Genotype>
-	bool Species<Genotype>::is_stagnating()
+	bool Species<Genotype>::is_stagnating() const
 	{
 		if (_stagnating_for > MAX_STAGNATION_PERIOD)
 		{
@@ -205,7 +205,7 @@ namespace vrntzt::neat
 	}
 
 	template<Genotype_Type Genotype>
-	inline size_t Species<Genotype>::size()
+	inline size_t Species<Genotype>::size() const
 	{
 		return _individuals.size();
 	}
