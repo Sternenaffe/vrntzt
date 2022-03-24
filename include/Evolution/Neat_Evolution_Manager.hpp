@@ -63,10 +63,10 @@ namespace vrntzt::neat
 	struct Neat_Evolution_Settings
 	{
 	public:
-		int population_size = 100;
+		uint population_size = 100;
 		// will split population in batches for processing
 		// int batch_size = 100;
-		int species_count = 10;
+		uint species_count = 10;
 		float interspecies_mating_chance = 0.001f;
 	};
 
@@ -81,7 +81,7 @@ namespace vrntzt::neat
 		class XML_Handler;
 
 	public:
-		explicit Neat_Evolution_Manager(int t_input_num, int t_output_num,
+		explicit Neat_Evolution_Manager(uint t_input_num, uint t_output_num,
 			Neat_Evolution_Settings& t_settings);
 		virtual ~Neat_Evolution_Manager();
 

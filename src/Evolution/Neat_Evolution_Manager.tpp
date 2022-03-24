@@ -37,7 +37,7 @@ namespace vrntzt::neat
 {
 	template <Genotype_Type Genotype, Phenotype_Type Phenotype>
 	inline Neat_Evolution_Manager<Genotype, Phenotype>::Neat_Evolution_Manager(
-		int t_input_num, int t_output_num, 
+		uint t_input_num, uint t_output_num, 
 		Neat_Evolution_Settings& t_settings)
 	{
 		if constexpr (NEAT_EVOLUTION_MANAGER_DEBUG)
@@ -477,7 +477,10 @@ namespace vrntzt::neat
 
 		for (Species<Genotype>& species : _species)
 		{
-			elite.push_back(species.get_champion());
+			std::shared_ptr<Genotype> champion = species.get_champion();
+			// reset champion fitness
+			champion->set_fitness(0);
+			elite.push_back(champion);
 		}
 
 		return elite;

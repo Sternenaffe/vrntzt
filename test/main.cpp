@@ -90,8 +90,8 @@ int main()
 
 	Neat_Evolution_Settings ev_settings =
 	{
-		.population_size = 200,
-		.species_count = 50	
+		.population_size = 50,
+		.species_count = 10	
 	};
 
 	Neat_Evolution_Manager<Simplistic_Genotype, Simplistic_Phenotype>
@@ -113,9 +113,10 @@ int main()
 			// get fitness
 			for (auto& genotype : ev_manager.get_population())
 			{
+				//std::cout << "start fitness: " << genotype->get_fitness() << "\n";
 				// bottleneck - i guess sorting in decoding
-				// genotype->set_fitness(eval_xor(genotype.get()));
-				genotype->set_fitness(0);
+				genotype->set_fitness(eval_xor(genotype.get()));
+				//genotype->set_fitness(0);
 			}
 
 			auto best_genotype = ev_manager.get_previous_best_genotype();
