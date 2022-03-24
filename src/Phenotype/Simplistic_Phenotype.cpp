@@ -163,9 +163,11 @@ namespace vrntzt::neat
 	void Simplistic_Phenotype::reset()
 	{
 		// clear internal states - not necessary for feedforward nets
-		for (auto& state : _neuron_states)
+		// only clear outputs and hidden neuron states
+		for (size_t i = bias_num + input_num; i < _neuron_states.size();
+			++i)
 		{
-			state = 0;
+			_neuron_states[i] = 0;
 		}
 	}
 

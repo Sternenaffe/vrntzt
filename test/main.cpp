@@ -34,9 +34,10 @@ using std::vector;
 
 float get_xor(Simplistic_Phenotype& t_phenotype, float t_in1, float t_in2)
 {
-	t_phenotype.reset();
 	t_phenotype.set_input(0, t_in1);
 	t_phenotype.set_input(1, t_in2);
+
+	t_phenotype.reset();
 
 	t_phenotype.activate(3);
 
