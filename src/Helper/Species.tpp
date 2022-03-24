@@ -313,7 +313,7 @@ namespace vrntzt::neat
 	template<Genotype_Type Genotype>
 	void Species<Genotype>::reset_for_next_gen()
 	{
-		_representative = std::move(_champion);
+		_representative = _champion;
 		_champion = nullptr;
 		_individuals.clear();
 		_valid_metrics = false;

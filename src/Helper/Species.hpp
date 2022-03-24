@@ -43,7 +43,7 @@ namespace vrntzt::neat
 		const int MAX_STAGNATION_PERIOD = 15;
 		// determines how much of the population is allowed to reproduce
 		// decision is made based on fitness
-		const float PROPAGABLE_FRACTION = 0.4f;
+		const float PROPAGABLE_FRACTION = 0.25f;
 
 	public:
 		explicit Species(std::shared_ptr<Genotype> t_representative);

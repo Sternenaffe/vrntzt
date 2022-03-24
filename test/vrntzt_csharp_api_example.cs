@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Text;
 using System.Linq;
 
@@ -87,6 +87,85 @@ namespace vrntzt.neat.csharp_api.test
                 }
 
                 manager.EvolvePopulation();
+            }
+        }
+    }
+}
+*/
+
+using System;
+using vrntzt.neat.csharp_api;
+
+class Program
+{
+    static void Main()
+    {
+        // Settings for Evolution
+        NeatEvolutionSettings settings = new NeatEvolutionSettings()
+        {
+            PopulationSize = 100,
+            SpeciesCount = 10,
+            InterspeciesMatingChance = 0.001f
+        };
+
+        // create evolution manager
+        NeatEvolutionManager manager = new NeatEvolutionManager(2, 1, settings);
+
+        // try to load population, if no file exists: create starting population
+        try
+        {
+            manager.Load("population.xml");
+        }
+        catch
+        {
+            manager.CreateRandomPopulation();
+        }
+
+        uint generation = 0;
+
+        while (true)
+        {
+            // print generations best fitness via acquiring of best genotype
+            float bestFitness = manager.GetPreviousBestGenotype().GetFitness();
+            Console.WriteLine($"Best fitness: {bestFitness}");
+
+            Console.WriteLine($"\n============== Generation {++generation} ==============");
+
+            // evaluate fitness of networks
+            foreach (SimplisticGenotype genotype in manager.GetPopulation())
+            {
+                // decode genotype into phenotype
+                SimplisticPhenotype phenotype = genotype.Decode();
+
+                // set inputs – GetNextInput() is custom function
+                phenotype.SetInput(0, GetNextInput());
+                phenotype.SetInput(1, GetNextInput());
+
+                // Reset because should be combinatorial network
+                phenotype.Reset();
+
+                // in this case, the (arbitrary) problem doesn’t require internal states, so
+                // iterations should be kept low
+                phenotype.Activate(3);
+
+                float output = phenotype.GetOutput(0);
+
+                // CalculateFitness is a custom function
+                float fitness = CalculateFitness(output);
+                genotype.SetFitness(fitness);
+
+                // phenotype is not needed anymore – should be done with try – catch in an
+                // actual program
+                phenotype.Dispose();
+            }
+
+            // advance evolution by one generation
+            manager.EvolvePopulation();
+
+            // save population every 100 generations
+            if (generation % 100 == 0)
+            {
+                manager.Save("population.xml");
             }
         }
     }

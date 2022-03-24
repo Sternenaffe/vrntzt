@@ -162,7 +162,7 @@ namespace vrntzt::neat
 
 		// determines how often sexual reproduction with individual which
 		// is not compatible will occur
-		float _interspecies_reproduction_chance = 0.1f;
+		float _interspecies_reproduction_chance = 0.001f;
 		// determines how often sexual and asexual respectively
 		// reproduction will occur
 		float _sexual_reproduction_chance = 0.75f;
