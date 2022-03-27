@@ -33,8 +33,8 @@ namespace vrntzt::neat
 {
 	constexpr bool VRNTZT_NEAT_SPECIES_DEBUG = false;
 
-	constexpr bool VRNTZT_NEAT_SPECIES_STAGNATION_DEBUG = true;
-	constexpr bool NEAT_EVOLUTION_MANAGER_STAGNATING_WARNING = true;
+	constexpr bool VRNTZT_NEAT_SPECIES_STAGNATION_DEBUG = false;
+	constexpr bool VRNTZT_NEAT_SPECIES_STAGNATION_WARNING = true;
 
 	template <Genotype_Type Genotype>
 	using Genotype_Container = std::vector<std::shared_ptr<Genotype>>;
