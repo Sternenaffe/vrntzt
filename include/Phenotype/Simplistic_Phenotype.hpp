@@ -113,7 +113,7 @@ namespace vrntzt::neat
 
 		void _update_neuron_state(const size_t t_neuron);
 
-		// index represents source neuron;
+		// index represents target neuron;
 		// _connections.size = input_num + hidden_neuron_num + bias_num
 		const std::vector<std::vector<Connection>> _connections;
 

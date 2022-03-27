@@ -195,6 +195,10 @@ namespace vrntzt::neat
 			{ 
 				IO::debug("stagnating species\n");
 			}
+			else if constexpr (VRNTZT_NEAT_SPECIES_STAGNATION_WARNING)
+			{
+				IO::warning("stagnating species\n");
+			}
 
 			return true;
 		}
